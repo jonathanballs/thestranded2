@@ -2,20 +2,27 @@
 
 export class GameRoom {
     name: string;
-    players: { [id: string]: Player } = {}; // Lookup players by id
     seed: number;
+    players: { [id: string]: Player } = {}; // Lookup players by id
+    bullets: Bullet[] = [];
 
     // Add a new player to the game
     addPlayer(player: Player) {
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
         let i = 0;
-        while (this.players[`player-${uNameAlpha}-${i.toString()}`] !== undefined) {
+        console.log("======================hh")
+        console.log(this.players);
+        while (true) {
+            player.id = `player-${uNameAlpha}-${i.toString()}`;
+            if (this.players[player.id] === undefined) {
+                this.players[player.id] = player;
+                break;
+            }
             i++;
         }
+        console.log(player.id);
 
-        player.id = `player-${uNameAlpha}-${i.toString()}`;
-        this.players[player.id] = player;
 
         // TODO: Set their position etc.
     }
@@ -59,4 +66,7 @@ export class Player extends LivingEntity {
         // TODO: Check if a valid sprite id
         this.characterSpriteId = characterSpriteId || 'default';
     }
+}
+
+export class Bullet extends LivingEntity {
 }

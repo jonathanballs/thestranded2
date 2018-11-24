@@ -8,6 +8,8 @@ import Projectile from './Projectile'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS} from './utils'
 import io from 'socket.io-client';
 
+const socket = io();
+
 const [width, height] = CANVAS_SIZE
 var playerAnim:Anim
 var player:Sprite
@@ -86,16 +88,24 @@ const sketch = (s:any) => {
         const distance = 0.5
         const deltaX = distance * Math.cos(player.rot)
         const deltaY = distance * Math.sin(player.rot)
+        // Send bullet to the server
+        socket.emit('playerFiresBullet', {
+            pos: {
+                x: player.x + deltaX,
+                y: player.y + deltaY,
+            },
+            rotation: player.rot,
+        });
+
         projectiles.push(new Projectile(projectlieImage, player.x+deltaX, player.y+deltaY, player.rot)) 
+
     }
 }
 
 //@ts-ignore
 const P5 = new p5(sketch)
 
-
 // Socket.io connection
-const socket = io();
 socket.on('connect', () => {
     console.log("Connected to websocket");
 
@@ -118,7 +128,7 @@ socket.on('connect', () => {
 
     // When a game snapshot is received from the server
     socket.on('mapSnapshot', (snapshot: any) => {
-        console.log(snapshot);
+        // console.log(snapshot);
     });
 });
 
