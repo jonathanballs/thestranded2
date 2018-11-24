@@ -77,6 +77,7 @@ const sketch = (s:any) => {
         for(let i=0; i < hIds.length; i++) {
             const human = gameState.players[hIds[i]]
             human.draw(s)
+            human.update(timeDiff, s)
         }
 
         // Projectiles
@@ -159,6 +160,10 @@ socket.on('connect', () => {
                 // console.log(human.pos)
                 gameState.players[id].x = human.pos.x
                 gameState.players[id].y = human.pos.y
+                const velX = human.currentVelocity * Math.cos(human.rot)
+                const velY = human.currentVelocity * Math.sin(human.rot)
+                gameState.players[id].velX = human.velX
+                gameState.players[id].velY = human.velY
             }
         }
     });
@@ -193,7 +198,8 @@ setInterval(() => {
             y: player.y,
         },
         rotation: player.rot,
-        velocity: player.velX + player.velY != 0 ? 2 : 0,
+        velX: player.velX,
+        velY: player.velY
     }
     socket.emit('playerUpdateState', p);
 }, NETWORK_TICK_MS);

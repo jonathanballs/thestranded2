@@ -7,7 +7,7 @@ import joi, { number } from 'joi';
 import { GameRoom, Player } from './gamestate';
 import { thisExpression, throwStatement } from 'babel-types';
 
-const NETWORK_TICK_MS = 500;
+const NETWORK_TICK_MS = 10;
 
 // Create server
 const app = express();
@@ -101,7 +101,8 @@ io.on('connection', function (socket: any) {
                 y: joi.number(),
             }).required(),
             rotation: joi.number(),
-            velocity: joi.number(),
+            velX: joi.number(),
+            velY: joi.number(),
         }).required();
 
         joi.validate(pStateRaw, schema).then(pState => {
@@ -109,7 +110,8 @@ io.on('connection', function (socket: any) {
             ps[socket.playerId].pos = pState.pos;
             ps[socket.playerId].latency = pState.latency;
             ps[socket.playerId].rotation = pState.rotation;
-            ps[socket.playerId].currentVelocity = pState.velocity;
+            ps[socket.playerId].velX = pState.velX;
+            ps[socket.playerId].velY = pState.velY;
             ps[socket.playerId].timestampUpdated = Date.now();
         }).catch(err => {
             socket.emit('serverError',
