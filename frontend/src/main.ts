@@ -53,8 +53,8 @@ const sketch = (s:any) => {
         const timeDiff = curTime - lastUpdate
         // CAMERA
         s.translate(
-            width/2 - (player.x * TILE_SIZE),
-            height/2 - (player.y * TILE_SIZE)
+            (width/2 - (player.x * TILE_SIZE)),
+            (height/2 - (player.y * TILE_SIZE))
         )
         // BACKGROUND
         background.draw(s)
@@ -83,7 +83,10 @@ const sketch = (s:any) => {
         s.pop()
     }
     s.mouseClicked = () => {
-       projectiles.push(new Projectile(projectlieImage, player.x, player.y, player.rot)) 
+        const distance = 0.5
+        const deltaX = distance * Math.cos(player.rot)
+        const deltaY = distance * Math.sin(player.rot)
+        projectiles.push(new Projectile(projectlieImage, player.x+deltaX, player.y+deltaY, player.rot)) 
     }
 }
 
