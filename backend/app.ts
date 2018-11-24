@@ -5,6 +5,9 @@ import express from 'express';
 import joi from 'joi';
 
 import { GameRoom, Player } from './gamestate';
+import { thisExpression, throwStatement } from 'babel-types';
+
+const NETWORK_TICK_MS = 500;
 
 // Create server
 const app = express();
@@ -29,10 +32,19 @@ server.listen(port, () => {
     console.log("Stranded server started on port " + port);
 });
 
-const rooms: GameRoom[] = [];
+const rooms: { [roomId: string]: GameRoom } = {};
 
 // Handle socket.io connections
 io.on('connection', function (socket) {
+
+    let room: GameRoom;
+    let roomName: string;
+    let playerId: string;
+
+    socket.on('disconnect', () => {
+        // Remove player from game
+        delete this.room.players[this.userId];
+    });
 
     // Add the client to a server when they request to join a room
     socket.on('joinRoom', (userDetailsRaw: any) => {
@@ -63,8 +75,10 @@ io.on('connection', function (socket) {
             rooms[userDetails.roomName].addPlayer(p);
 
             // Save user details to the socket object
-            this.userId = p.id;
+            this.playerId = p.id;
             this.roomName = userDetails.roomName;
+            this.room = rooms[this.roomName];
+            socket.join(this.roomName);
 
             socket.emit('joinRoom', {
                 player: p,
@@ -91,15 +105,25 @@ io.on('connection', function (socket) {
             velocity: joi.number(),
         }).required();
 
-
         joi.validate(pStateRaw, schema).then(pState => {
-            console.log(pState);
+            const ps = this.room.players;
+            ps[this.playerId].pos = pState.pos;
+            ps[this.playerId].rotation = pState.rotation;
+            ps[this.playerId].currentVelocity = pState.velocity;
+            ps[this.playerId].timestampUpdated = Date.now();
         })
     })
 
     // Allow clients to calculate latency
     socket.on('strandedPing', (n: number) => {
-        console.log(n);
         socket.emit('strandedPong', { n, timestamp: Date.now() })
     });
 });
+
+// Send gamestate to the clients periodically
+setInterval(() => {
+    Object.keys(rooms).forEach(roomId => {
+        const r = rooms[roomId];
+        io.to(roomId).emit('mapSnapshot', r);
+    });
+}, 1000)

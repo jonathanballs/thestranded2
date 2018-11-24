@@ -5,7 +5,7 @@ import Player from './Player'
 import Anim from './Animation'
 import Background from './Background'
 import Projectile from './Projectile'
-import {DEBUG, CANVAS_SIZE, TILE_SIZE} from './utils'
+import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS} from './utils'
 import io from 'socket.io-client';
 
 const [width, height] = CANVAS_SIZE
@@ -112,9 +112,15 @@ socket.on('connect', () => {
         console.log(err)
         console.error(`[SERVER ERROR] ${err}`)
     });
+
+    // When a game snapshot is received from the server
+    socket.on('mapSnapshot', (snapshot) => {
+        console.log(snapshot);
+    });
 });
 
 
+// Periodically pings the server and detects latency
 function startLatencyDetection(socket: SocketIOClient.Socket) {
     let start = Date.now();
     let n = 0;
@@ -130,3 +136,19 @@ function startLatencyDetection(socket: SocketIOClient.Socket) {
         socket.emit('strandedPing', ++n);
     }, 1000)
 }
+
+// Send player location to server periodically
+setInterval(() => {
+    if (!player) return;
+    const p = {
+        timestamp: getServerTime(),
+        latency: serverLatency,
+        pos: {
+            x: player.x,
+            y: player.y,
+        },
+        rotation: player.rot,
+        velocity: 0,
+    }
+    socket.emit('playerUpdateState', p);
+}, NETWORK_TICK_MS);
