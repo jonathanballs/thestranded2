@@ -18,9 +18,9 @@ const sketch = (s:any) => {
     s.preload = () => {
         playerAnim = new Anim(s, '/static/imgs/blue.png', '/static/imgs/blue_walk.png')
         tile_set = [
-            new Anim(s, '/static/imgs/water.png'),
-            new Anim(s, '/static/imgs/dirt.png'),
-            new Anim(s, '/static/imgs/grass.png')
+            s.loadImage('/static/imgs/water.png'),
+            s.loadImage('/static/imgs/dirt.png'),
+            s.loadImage('/static/imgs/grass.png')
         ]
         background = new Background(s, tile_set)
     }
@@ -51,9 +51,12 @@ const sketch = (s:any) => {
         // BACKGROUND
         background.draw(s)
 
+        // Player
         player.update(curTime - lastUpdate, s)
         player.draw(s)
 
+
+        // Event loop stuff
         lastUpdate = curTime
         if(DEBUG) {
             s.fill('black')
