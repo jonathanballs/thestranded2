@@ -4,6 +4,7 @@ import Sprite from './Sprite'
 import Player from './Player'
 import Anim from './Animation'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE} from './utils'
+import io from 'socket.io-client';
 
 const [width, height] = CANVAS_SIZE
 var playerAnim:Anim;
@@ -51,3 +52,25 @@ const sketch = (s:any) => {
 
 //@ts-ignore
 const P5 = new p5(sketch)
+
+
+// Socket.io connection
+const socket = io();
+socket.on('connect', () => {
+    console.log("Connected to websocket");
+    socket.emit('joinRoom', {
+        name: 'jonny',
+        mode: 'player',
+    });
+
+    socket.on('joinRoom', (roomData: any) => {
+        console.log(roomData);
+    })
+
+    socket.on('serverError', (err: any) => {
+        console.log(err)
+        console.error(`[SERVER ERROR] ${err}`)
+    });
+});
+
+
