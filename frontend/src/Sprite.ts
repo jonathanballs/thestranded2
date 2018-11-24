@@ -7,12 +7,16 @@ import { TILE_SIZE, DEBUG, debug } from './utils'
 export default class Sprite {
     x: number
     y: number
+    velX: number
+    velY: number
     width: number
     height: number
     look: Anim | p5.Image
     constructor(look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
         this.x = x
         this.y = x
+        this.velX = 0
+        this.velY = 0
         if (width != null && height != null) {
             this.width = width
             this.height = height
@@ -22,6 +26,12 @@ export default class Sprite {
             [this.width, this.height] = [look.width, look.height]
         }
         this.look = look
+    }
+
+    update(timeDelta: number, s) {
+        const mult = timeDelta/100
+        this.x += this.velX * mult
+        this.y += this.velY * mult
     }
 
     draw(s:any) {
