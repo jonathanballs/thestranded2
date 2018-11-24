@@ -15,8 +15,8 @@ export default class Sprite {
     look: Anim | p5.Image
     constructor(look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
         this.x = x
-        this.y = x
-        this.rot = 1
+        this.y = y
+        this.rot = 0
         this.velX = 0
         this.velY = 0
         if (width != null && height != null) {
@@ -36,7 +36,7 @@ export default class Sprite {
         this.y += this.velY * mult
     }
 
-    draw(s:any) {
+    draw(s:any, noDebug:boolean = DEBUG) {
         s.push()
         s.translate(this.x * TILE_SIZE, this.y * TILE_SIZE)
         s.rotate(this.rot)
@@ -45,10 +45,10 @@ export default class Sprite {
         } else {
             s.image(this.look, 0,0, this.width, this.height)
         }
-        if (DEBUG) {
+        if (noDebug) {
             s.stroke(255, 0, 0)
             s.noFill()
-            s.ellipse( 0,0, this.width)
+            s.ellipse(0,0, this.width)
         }
         s.pop()
     }
