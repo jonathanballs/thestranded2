@@ -65,7 +65,7 @@ const frontend = {
   },
   output: {
     filename: 'client.js',
-    path: path.resolve(__dirname, 'dist/static')
+    path: path.resolve(__dirname, 'dist/static'),
   },
   plugins: [
     new CopyWebpackPlugin([

@@ -1,4 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+define("app", ["require", "exports", "socket.io-client"], function (require, exports, socket_io_client_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    socket_io_client_1 = __importDefault(socket_io_client_1);
+    var socket = socket_io_client_1.default();
+    socket.on('connect', function () {
+        console.log("Connected");
+    });
+});
 /// <reference path="../types//p5.global-mode.d.ts" />
 var DEBUG = true;
 var debug = function () {
@@ -14,7 +26,7 @@ var playerAnim;
 var player;
 // @ts-ignore
 function preload() {
-    playerAnim = new Anim('/imgs/blue.png', '/imgs/blue_walk.png');
+    playerAnim = new Anim('/static/imgs/blue.png', '/static/imgs/blue_walk.png');
 }
 function setup() {
     createCanvas(800, 600);

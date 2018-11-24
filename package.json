@@ -14,8 +14,10 @@
   "author": "Jonathan Balls",
   "license": "MIT",
   "dependencies": {
+    "@types/p5": "^0.7.1",
     "copy-webpack-plugin": "^4.6.0",
     "express": "^4.16.4",
+    "p5": "^0.7.2",
     "pug": "^2.0.3",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1"
