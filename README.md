@@ -1,6 +1,4 @@
-# Template.ts [![Build Status](https://travis-ci.org/jonathanballs/template.ts.svg?branch=master)](https://travis-ci.org/jonathanballs/template.ts)
-
-A template for typescript/express projects. Webpack for building, Jest for testing, Travis for CI, Docker/Dokku for deployment.
+# The Stranded 2 [![Build Status](https://travis-ci.org/jonathanballs/thestranded2.svg?branch=master)](https://travis-ci.org/jonathanballs/thestranded2.ts)
 
 ## Getting started
 * `yarn install`: to install dependencies
@@ -24,8 +22,3 @@ All of the run-scripts have a "watch mode" which reruns the command when files c
 ## Setting up dokku
 The repo can be deployed immediately to a dokku container however extra steps must be taken to implement continuous integration.
 
-## Todo
-
-- [ ] Sentry integration/remote debugging. (insight to running process).
-- [ ] Joi
-- [ ] Editorconfig/eslint
