@@ -43,7 +43,8 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', () => {
         // Remove player from game
-        delete this.room.players[this.userId];
+        delete this.room.players[this.playerId];
+        console.log(`${this.playerId} has disconnected`);
     });
 
     // Add the client to a server when they request to join a room
