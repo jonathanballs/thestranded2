@@ -3,7 +3,6 @@
 export class GameRoom {
     name: string;
     players: { [id: string]: Player } = {}; // Lookup players by id
-    map: Map;
     seed: number;
 
     // Add a new player to the game
@@ -28,9 +27,6 @@ export class GameRoom {
     }
 }
 
-export class Map {
-}
-
 // Generic base class for "living things"; Zombies, players
 // and any other autonomous entity will subclass this.
 export class LivingEntity {
@@ -46,10 +42,12 @@ export class LivingEntity {
         y: number,
     }
     rotation: number;
-    currentSpeed: number;
-    maxSpeed: number;
+    currentVelocity: number;
+    maxVelocity: number;
+    timestampUpdated: Date;
 }
 
+// Human controlled player
 export class Player extends LivingEntity {
     name: string;
     characterSpriteId: string;

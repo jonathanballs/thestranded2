@@ -10,6 +10,9 @@ const [width, height] = CANVAS_SIZE
 var playerAnim:Anim;
 var player:Sprite;
 var lastUpdate = 0
+let serverLatency = 0;
+let serverTimeOffset = 0; // ms ahead that the server is
+const getServerTime = () => { return new Date(+new Date + serverTimeOffset)}
 
 const sketch = (s:any) => {
     s.preload = () => {
@@ -58,11 +61,15 @@ const P5 = new p5(sketch)
 const socket = io();
 socket.on('connect', () => {
     console.log("Connected to websocket");
+
+    startLatencyDetection(socket);
+    // Join a room
     socket.emit('joinRoom', {
         name: 'jonny',
         mode: 'player',
     });
 
+    // Recieve back player and room data
     socket.on('joinRoom', (roomData: any) => {
         console.log(roomData);
     })
@@ -74,3 +81,18 @@ socket.on('connect', () => {
 });
 
 
+function startLatencyDetection(socket: SocketIOClient.Socket) {
+    let start = Date.now();
+    let n = 0;
+    socket.on('strandedPong', (ret: any) => {
+        serverLatency = Date.now() - start;
+        if (ret.n != n) return; // Wrong pong
+        const serverTimeOffset = ret.timestamp - (Date.now() - serverLatency/2);
+    })
+
+    socket.emit('strandedPing', n);
+    setInterval(() => {
+        start = Date.now();
+        socket.emit('strandedPing', ++n);
+    }, 1000)
+}
