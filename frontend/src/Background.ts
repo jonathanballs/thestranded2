@@ -1,6 +1,7 @@
 import 'p5'
 import Sprite from './Sprite'
 import Anim from './Animation'
+import Tile from './Tile'
 import { TILE_SIZE } from './utils'
 
 const MAP_SIZE = 40
@@ -21,8 +22,8 @@ export default class Background {
             for (let x = 0; x < MAP_SIZE; x++) {
                 const noise = s.noise(x*NOISE_MULTIPLIER, y*NOISE_MULTIPLIER)
                 const index = Math.floor(noise * this.tile_set.length)
-                this.map[y][x] = new Sprite(this.tile_set[index],
-                    x, y, TILE_SIZE, TILE_SIZE)
+                this.map[y][x] = new Tile(this.tile_set[index],
+                    (x-MAP_SIZE/2), (y-MAP_SIZE/2), TILE_SIZE, TILE_SIZE)
             }
         }
     }
