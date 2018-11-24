@@ -6,7 +6,7 @@ import { CANVAS_SIZE, TILE_SIZE, DEBUG } from './utils'
 
 const [width, height] = CANVAS_SIZE
 
-const PLAYER_SPEED = 3
+const PLAYER_SPEED = 1
 
 export default class Player extends Sprite {
     update(timeDelta: number, s:any) {

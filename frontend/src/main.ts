@@ -3,20 +3,29 @@ import 'p5'
 import Sprite from './Sprite'
 import Player from './Player'
 import Anim from './Animation'
+import Background from './Background'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE} from './utils'
 import io from 'socket.io-client';
 
 const [width, height] = CANVAS_SIZE
 var playerAnim:Anim;
 var player:Sprite;
+var background:Background;
 var lastUpdate = 0
 let serverLatency = 0;
 let serverTimeOffset = 0; // ms ahead that the server is
 const getServerTime = () => { return new Date(+new Date + serverTimeOffset)}
+var tile_set:Anim[]
 
 const sketch = (s:any) => {
     s.preload = () => {
         playerAnim = new Anim(s, '/static/imgs/blue.png', '/static/imgs/blue_walk.png')
+        tile_set = [
+            s.loadImage('/static/imgs/water.png'),
+            s.loadImage('/static/imgs/dirt.png'),
+            s.loadImage('/static/imgs/grass.png')
+        ]
+        background = new Background(s, tile_set)
     }
     s.setup = () => {
         s.createCanvas(width, height)
@@ -27,22 +36,30 @@ const sketch = (s:any) => {
         player.y = 5
         lastUpdate = Date.now()
         // s.translate(width/2, height/2)
+        background.create(s)
+        window.onresize = () => {
+            s.resizeCanvas(window.innerWidth, window.innerHeight)
+        }
     }
     s.draw = () => {
-        s.push()
-        s.stroke(255, 0, 0)
-        s.noFill()
-        s.ellipse(0,0, 50)
-        const curTime = Date.now()
         s.background(255)
+        s.push()
+
+        const curTime = Date.now()
+        // CAMERA
         s.translate(
             width/2 - (player.x * TILE_SIZE),
             height/2 - (player.y * TILE_SIZE)
-            // (player.x * TILE_SIZE) + width/2,
-            // (player.y * TILE_SIZE) + height/2
         )
+        // BACKGROUND
+        background.draw(s)
+
+        // Player
         player.update(curTime - lastUpdate, s)
         player.draw(s)
+
+
+        // Event loop stuff
         lastUpdate = curTime
         if(DEBUG) {
             s.fill('black')
