@@ -34,14 +34,14 @@ const sketch = (s:any) => {
         lastUpdate = Date.now()
         // s.translate(width/2, height/2)
         background.create(s)
+        window.onresize = () => {
+            s.resizeCanvas(window.innerWidth, window.innerHeight)
+        }
     }
     s.draw = () => {
         s.background(255)
         s.push()
 
-        s.stroke(255, 0, 0)
-        s.noFill()
-        s.ellipse(0,0, 50)
         const curTime = Date.now()
         // CAMERA
         s.translate(
