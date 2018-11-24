@@ -3,13 +3,16 @@ import Sprite from './Sprite'
 import Anim from './Animation'
 import Tile from './Tile'
 import { TILE_SIZE } from './utils'
+import Player from './Player';
 
-const MAP_SIZE = 40
+const MAP_SIZE = 200
 const NOISE_MULTIPLIER = 0.1
+const DRAW_RADIUS = 250 // Squared
 
 export default class Background {
     tile_set: Anim[]
     map: Sprite[][] = []
+    player: Player
     constructor(s:any, tile_set:Anim[]) {
         this.tile_set = tile_set
         for(let i = 0; i < MAP_SIZE; i++) {
@@ -17,6 +20,9 @@ export default class Background {
         }
     }
 
+    addPlayer(p:Player) {
+        this.player = p
+    }
     create(s:any) {
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
@@ -29,9 +35,17 @@ export default class Background {
     }
     
     draw(s:any) {
+        if(this.player == null){ return }
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
-                this.map[y][x].draw(s, false)
+                const distanceFromPlayer = Math.abs(
+                    Math.pow((x-MAP_SIZE/2) - this.player.x,2) +
+                    Math.pow((y-MAP_SIZE/2) - this.player.y,2)
+                )
+                // console.log(distanceFromPlayer)
+                if(distanceFromPlayer < DRAW_RADIUS) {
+                    this.map[y][x].draw(s, false)
+                }
             }
         }
     }

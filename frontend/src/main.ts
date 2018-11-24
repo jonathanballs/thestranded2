@@ -44,6 +44,7 @@ const sketch = (s:any) => {
         player = new Player(playerAnim, 200, 200)
         player.x = 5
         player.y = 5
+        background.addPlayer(player)
         lastUpdate = Date.now()
         // s.translate(width/2, height/2)
         background.create(s)
@@ -138,13 +139,14 @@ socket.on('connect', () => {
         const playerIds = Object.keys(snapshot.players)
         for(let id of playerIds) {
             if(id == playerId) { continue }
-            console.log(id)
+            // console.log(id, playerId)
             const human = snapshot.players[id]
             if(gameState.players[id] == null) {
-                debug(`${id} has joined`)
+                // debug(`${id} has joined`)
                 gameState.players[id] = new Human(playerAnim, human.pos.x, human.pos.y)
             } else {
-                debug(`${id} has been updated`)
+                // debug(`${id} has been updated`)
+                // console.log(human.pos)
                 gameState.players[id].x = human.pos.x
                 gameState.players[id].y = human.pos.y
             }
