@@ -50,7 +50,7 @@ socket.on('connect', () => {
         console.log(roomData);
     })
 
-    socket.on('serverError', err => {
+    socket.on('serverError', (err: any) => {
         console.log(err)
         console.error(`[SERVER ERROR] ${err}`)
     });
