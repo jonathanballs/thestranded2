@@ -3,7 +3,9 @@ import 'p5'
 import Sprite from './Sprite'
 import Player from './Player'
 import Anim from './Animation'
+import {CANVAS_SIZE} from './utils'
 
+const [width, height] = CANVAS_SIZE
 var playerAnim:Anim;
 var player:Sprite;
 var lastUpdate = 0
@@ -13,7 +15,7 @@ const sketch = (s:any) => {
         playerAnim = new Anim(s, '/static/imgs/blue.png', '/static/imgs/blue_walk.png')
     }
     s.setup = () => {
-        s.createCanvas(800, 600)
+        s.createCanvas(width, height)
         s.imageMode(s.CENTER)
         s.rectMode(s.CENTER)
         player = new Player(playerAnim, 200, 200)

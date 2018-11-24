@@ -2,12 +2,16 @@
 import 'p5'
 import Sprite from './Sprite'
 import Anim from './Animation'
+import {CANVAS_SIZE} from './utils'
+
+const [width, height] = CANVAS_SIZE
 
 const PLAYER_SPEED = 3
 
 export default class Player extends Sprite {
-    //@ts-ignore
     update(timeDelta: number, s:any) {
+        this.rot = Math.atan2(s.mouseY - (height / 2), s.mouseX - (width / 2))
+
         this.velX = 0
         this.velY = 0
         if(s.keyIsDown(s.LEFT_ARROW) || s.keyIsDown(65)){ this.velX = -PLAYER_SPEED }
@@ -18,5 +22,4 @@ export default class Player extends Sprite {
         this.x += this.velX * mult
         this.y += this.velY * mult
     }
-
 }
