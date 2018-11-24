@@ -15,11 +15,11 @@ const sketch = (s:any) => {
         s.imageMode(s.CENTER)
         s.rectMode(s.CENTER)
         player = new Sprite(playerAnim, 200, 200)
+        player.x = 5
+        player.y = 5
     }
     s.draw = () => {
         s.background(255)
-        player.x = s.mouseX
-        player.y = s.mouseY
         player.draw(s)
     }
 }

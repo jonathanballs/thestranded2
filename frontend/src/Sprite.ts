@@ -1,7 +1,7 @@
 /// <reference path="../types//p5.global-mode.d.ts" />
 import 'p5'
 import Anim from './Animation'
-import { DEBUG, debug } from './utils'
+import { TILE_SIZE, DEBUG, debug } from './utils'
 
 
 export default class Sprite {
@@ -26,14 +26,26 @@ export default class Sprite {
 
     draw(s:any) {
         if (this.look instanceof Anim) {
-            s.image(this.look.imageList[0], this.x, this.y, this.width, this.height)
+            s.image(this.look.imageList[0],
+                this.x * TILE_SIZE,
+                this.y * TILE_SIZE,
+                this.width,
+                this.height)
         } else {
-            s.image(this.look, this.x, this.y, this.width, this.height)
+            s.image(this.look, 
+                this.x * TILE_SIZE,
+                this.y * TILE_SIZE,
+                this.width,
+                this.height)
         }
         if (DEBUG) {
             s.stroke(255, 0, 0)
             s.noFill()
-            s.rect(this.x, this.y, this.width, this.height)
+            s.ellipse(
+                this.x * TILE_SIZE, 
+                this.y * TILE_SIZE, 
+                this.width, 
+            )
         }
     }
 }
