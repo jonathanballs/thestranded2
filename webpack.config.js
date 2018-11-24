@@ -50,7 +50,7 @@ const backend = {
 
 const frontend = {
   name: 'Frontend',
-  entry: './frontend/app.ts',
+  entry: './frontend/src/main.ts',
   mode: 'development',
   module: {
     rules: [
@@ -65,13 +65,13 @@ const frontend = {
   },
   output: {
     filename: 'client.js',
-    path: path.resolve(__dirname, 'dist/static')
+    path: path.resolve(__dirname, 'dist/static'),
   },
   plugins: [
     new CopyWebpackPlugin([
       {
-        context: 'frontend',
-        from: 'static/**/*',
+        context: 'static',
+        from: '**/*',
         to: './'
       },
     ]),
