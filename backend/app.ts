@@ -2,7 +2,7 @@ import { createServer, Server } from 'http';
 import * as path from 'path';
 import SocketIO from 'socket.io';
 import express from 'express';
-import joi from 'joi';
+import joi, { number } from 'joi';
 
 import { GameRoom, Player } from './gamestate';
 import { thisExpression, throwStatement } from 'babel-types';
@@ -35,21 +35,17 @@ server.listen(port, () => {
 const rooms: { [roomId: string]: GameRoom } = {};
 
 // Handle socket.io connections
-io.on('connection', function (socket) {
-
-    let room: GameRoom;
-    let roomName: string;
-    let playerId: string;
+io.on('connection', function (socket: any) {
 
     socket.on('disconnect', () => {
         // Remove player from game
-        delete this.room.players[this.playerId];
-        console.log(`${this.playerId} has disconnected`);
+        delete socket.room.players[socket.playerId];
+        console.log("playerid discon", socket.playerId);
+        console.log(`${socket.playerId} has disconnected`);
     });
 
     // Add the client to a server when they request to join a room
     socket.on('joinRoom', (userDetailsRaw: any) => {
-        console.log(`Connection recieved from ${socket.id}`);
         const schema = joi.object().keys({
             name: joi.string().alphanum().max(15).required(),
             mode: joi.string().only(['spectator', 'player']).required(),
@@ -76,16 +72,16 @@ io.on('connection', function (socket) {
             rooms[userDetails.roomName].addPlayer(p);
 
             // Save user details to the socket object
-            this.playerId = p.id;
-            this.roomName = userDetails.roomName;
-            this.room = rooms[this.roomName];
-            socket.join(this.roomName);
+            socket.playerId = p.id;
+            socket.roomName = userDetails.roomName;
+            socket.room = rooms[socket.roomName];
+            socket.join(socket.roomName);
 
             socket.emit('joinRoom', {
                 player: p,
                 room: {
-                    name: this.roomName,
-                    seed: rooms[this.roomName].seed,
+                    name: socket.roomName,
+                    seed: rooms[socket.roomName].seed,
                 }
             });
         }).catch((err: any) => {
@@ -94,7 +90,9 @@ io.on('connection', function (socket) {
         })
     })
 
-    socket.on('playerUpdateState', (pStateRaw) => {
+    socket.on('playerUpdateState', (pStateRaw: any) => {
+        if (!socket.playerId) return; // safety
+
         const schema = joi.object().keys({
             timestamp: joi.date(),
             latency: joi.number(),
@@ -107,13 +105,31 @@ io.on('connection', function (socket) {
         }).required();
 
         joi.validate(pStateRaw, schema).then(pState => {
-            const ps = this.room.players;
-            ps[this.playerId].pos = pState.pos;
-            ps[this.playerId].latency = pState.latency;
-            ps[this.playerId].rotation = pState.rotation;
-            ps[this.playerId].currentVelocity = pState.velocity;
-            ps[this.playerId].timestampUpdated = Date.now();
+            const ps = socket.room.players;
+            ps[socket.playerId].pos = pState.pos;
+            ps[socket.playerId].latency = pState.latency;
+            ps[socket.playerId].rotation = pState.rotation;
+            ps[socket.playerId].currentVelocity = pState.velocity;
+            ps[socket.playerId].timestampUpdated = Date.now();
+        }).catch(err => {
+            socket.emit('serverError',
+              `joinRoom: ${JSON.stringify(pStateRaw)}: ${err}`);
         })
+    });
+
+    socket.on('playerFiresBullet', (bulletInfoRaw: any) => {
+        const schema = joi.object().keys({
+            pos: joi.object().keys({
+                x: joi.number(),
+                y: joi.number(),
+            }),
+            rotation: joi.number(),
+        });
+
+        joi.validate(bulletInfoRaw, schema).then(bulletInfo => {
+            bulletInfo.timestampUpdated
+            // Record bullets onto the location
+        });
     })
 
     // Allow clients to calculate latency
