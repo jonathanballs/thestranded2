@@ -4,7 +4,7 @@ import SocketIO from 'socket.io';
 import express from 'express';
 import joi from 'joi';
 
-import { GameRoom, Map, Player } from './gamestate';
+import { GameRoom, Player } from './gamestate';
 
 // Create server
 const app = express();
@@ -34,6 +34,7 @@ const rooms: GameRoom[] = [];
 // Handle socket.io connections
 io.on('connection', function (socket) {
 
+    // Add the client to a server when they request to join a room
     socket.on('joinRoom', (userDetailsRaw: any) => {
         console.log(`Connection recieved from ${socket.id}`);
         const schema = joi.object().keys({
@@ -53,7 +54,7 @@ io.on('connection', function (socket) {
             // Create room if doesn't exist
             if (rooms[userDetails.roomName] == undefined) {
                 const { roomName }  = userDetails;
-                socket.emit('joinRoom', { status: `Creating room ${roomName}`});
+                socket.emit('joinRoom', { status: `Creating room ${roomName}` });
                 rooms[roomName] = new GameRoom(roomName);
             }
 
@@ -77,4 +78,28 @@ io.on('connection', function (socket) {
             socket.emit('serverError', `joinRoom: ${JSON.stringify(userDetailsRaw)}: ${err}`);
         })
     })
+
+    socket.on('playerUpdateState', (pStateRaw) => {
+        const schema = joi.object().keys({
+            timestamp: joi.date(),
+            latency: joi.number(),
+            pos: joi.object().keys({
+                x: joi.number(),
+                y: joi.number(),
+            }).required(),
+            rotation: joi.number(),
+            velocity: joi.number(),
+        }).required();
+
+
+        joi.validate(pStateRaw, schema).then(pState => {
+            console.log(pState);
+        })
+    })
+
+    // Allow clients to calculate latency
+    socket.on('strandedPing', (n: number) => {
+        console.log(n);
+        socket.emit('strandedPong', { n, timestamp: Date.now() })
+    });
 });
