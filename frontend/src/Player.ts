@@ -2,7 +2,7 @@
 import 'p5'
 import Sprite from './Sprite'
 import Anim from './Animation'
-import {CANVAS_SIZE} from './utils'
+import { CANVAS_SIZE, TILE_SIZE, DEBUG } from './utils'
 
 const [width, height] = CANVAS_SIZE
 
