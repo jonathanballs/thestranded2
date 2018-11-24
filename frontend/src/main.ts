@@ -5,10 +5,12 @@ import Player from './Player'
 import Anim from './Animation'
 import Background from './Background'
 import Projectile from './Projectile'
-import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS} from './utils'
+import Human from './Sprite'
+import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, debug} from './utils'
 import io from 'socket.io-client';
 
 const [width, height] = CANVAS_SIZE
+var playerId:string;
 var playerAnim:Anim
 var player:Sprite
 var projectlieImage:p5.Image
@@ -19,6 +21,10 @@ let serverLatency = 0;
 let serverTimeOffset = 0; // ms ahead that the server is
 const getServerTime = (): number => { return +new Date + serverTimeOffset}
 var tile_set:Anim[]
+
+let gameState:any = {
+    players: {}
+}
 
 const sketch = (s:any) => {
     s.preload = () => {
@@ -62,6 +68,13 @@ const sketch = (s:any) => {
         // Player
         player.draw(s)
         player.update(timeDiff, s)
+
+        // Draw gamestate
+        const hIds = Object.keys(gameState.players)
+        for(let i=0; i < hIds.length; i++) {
+            const human = gameState.players[hIds[i]]
+            human.draw(s)
+        }
 
         // Projectiles
         for(let i = 0; i < projectiles.length; i++) {
@@ -109,6 +122,9 @@ socket.on('connect', () => {
     // Recieve back player and room data
     socket.on('joinRoom', (roomData: any) => {
         console.log(roomData);
+        if(roomData.player != null) {
+            playerId = roomData.player.id
+        }
     })
 
     socket.on('serverError', (err: any) => {
@@ -119,6 +135,20 @@ socket.on('connect', () => {
     // When a game snapshot is received from the server
     socket.on('mapSnapshot', (snapshot: any) => {
         console.log(snapshot);
+        const playerIds = Object.keys(snapshot.players)
+        for(let id of playerIds) {
+            if(id == playerId) { continue }
+            console.log(id)
+            const human = snapshot.players[id]
+            if(gameState.players[id] == null) {
+                debug(`${id} has joined`)
+                gameState.players[id] = new Human(playerAnim, human.pos.x, human.pos.y)
+            } else {
+                debug(`${id} has been updated`)
+                gameState.players[id].x = human.pos.x
+                gameState.players[id].y = human.pos.y
+            }
+        }
     });
 });
 
