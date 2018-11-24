@@ -2,8 +2,8 @@ import 'p5'
 import Sprite from './Sprite'
 import { TILE_SIZE, DEBUG } from './utils'
 
-const LIFE_TIME = 5000
-const MAX_VEL = 1
+const LIFE_TIME = 2500
+const MAX_VEL = 2
 export default class Projectile extends Sprite{
     alive: boolean
     creationTime: number
@@ -29,7 +29,9 @@ export default class Projectile extends Sprite{
     draw(s:any) {
         s.push()
         s.translate(this.x * TILE_SIZE, this.y * TILE_SIZE)
-        s.ellipsis(0,0,10)
+        s.fill('black')
+        s.noStroke()
+        s.ellipse(0,0,10)
         if (DEBUG) {
             s.stroke(255, 0, 0)
             s.noFill()

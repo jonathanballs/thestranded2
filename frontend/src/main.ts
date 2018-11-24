@@ -4,12 +4,15 @@ import Sprite from './Sprite'
 import Player from './Player'
 import Anim from './Animation'
 import Background from './Background'
+import Projectile from './Projectile'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE} from './utils'
 import io from 'socket.io-client';
 
 const [width, height] = CANVAS_SIZE
-var playerAnim:Anim;
-var player:Sprite;
+var playerAnim:Anim
+var player:Sprite
+var projectlieImage:p5.Image
+var projectiles:Projectile[] = []
 var background:Background;
 var lastUpdate = 0
 var tile_set:Anim[]
@@ -23,6 +26,7 @@ const sketch = (s:any) => {
             s.loadImage('/static/imgs/grass.png')
         ]
         background = new Background(s, tile_set)
+        projectlieImage = s.loadImage('/static/imgs/blue.png')
     }
     s.setup = () => {
         s.createCanvas(width, height)
@@ -43,6 +47,7 @@ const sketch = (s:any) => {
         s.push()
 
         const curTime = Date.now()
+        const timeDiff = curTime - lastUpdate
         // CAMERA
         s.translate(
             width/2 - (player.x * TILE_SIZE),
@@ -52,9 +57,18 @@ const sketch = (s:any) => {
         background.draw(s)
 
         // Player
-        player.update(curTime - lastUpdate, s)
         player.draw(s)
+        player.update(timeDiff, s)
 
+        // Projectiles
+        for(let i = 0; i < projectiles.length; i++) {
+            if(projectiles[i].alive == false) {
+                projectiles.splice(i, 1)
+                continue
+            }
+            projectiles[i].update(timeDiff, s)
+            projectiles[i].draw(s)
+        }
 
         // Event loop stuff
         lastUpdate = curTime
@@ -64,6 +78,9 @@ const sketch = (s:any) => {
             s.ellipse(0,0, 10)
         }
         s.pop()
+    }
+    s.mouseClicked = () => {
+       projectiles.push(new Projectile(projectlieImage, player.x, player.y, player.rot)) 
     }
 }
 
