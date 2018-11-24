@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+- node
+env:
+- DOKKU_HOST=dokku@206.189.120.167
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_c35963879624_key -iv $encrypted_c35963879624_iv -in deploy.key.enc -out deploy.key -d
+
+after_success:
+- eval "$(ssh-agent -s)"
+- chmod 600 deploy.key
+- ssh-add deploy.key
+- ssh-keyscan $DOKKU_HOST >> ~/.ssh/known_hosts
+- git remote add deploy $DOKKU_HOST:$TRAVIS_BRANCH
+- git config --global push.default simple
+- git push -f deploy master
+
+notifications:
+  email: false
+

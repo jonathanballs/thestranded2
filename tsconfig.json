@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "module": "es6",
+        "target": "es5",
+        "jsx": "react",
+        "allowJs": true,
+        "esModuleInterop": true
+    },
+    "include": [ "backend/*" ],
+    "exclude": [ "node_modules" ]
+}
+
