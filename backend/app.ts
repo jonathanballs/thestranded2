@@ -61,10 +61,7 @@ io.on('connection', function (socket) {
 
             // Create player and add to room
             const p = new Player(userDetails.name, userDetails.characterSpriteId);
-            console.log(p);
             rooms[userDetails.roomName].addPlayer(p);
-
-
 
             // Save user details to the socket object
             this.userId = p.id;
