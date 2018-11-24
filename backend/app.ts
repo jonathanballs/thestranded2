@@ -108,6 +108,7 @@ io.on('connection', function (socket) {
         joi.validate(pStateRaw, schema).then(pState => {
             const ps = this.room.players;
             ps[this.playerId].pos = pState.pos;
+            ps[this.playerId].latency = pState.latency;
             ps[this.playerId].rotation = pState.rotation;
             ps[this.playerId].currentVelocity = pState.velocity;
             ps[this.playerId].timestampUpdated = Date.now();
@@ -126,4 +127,4 @@ setInterval(() => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
     });
-}, 1000)
+}, 1000);

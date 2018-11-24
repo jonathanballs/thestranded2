@@ -17,7 +17,7 @@ var background:Background;
 var lastUpdate = 0
 let serverLatency = 0;
 let serverTimeOffset = 0; // ms ahead that the server is
-const getServerTime = () => { return new Date(+new Date + serverTimeOffset)}
+const getServerTime = (): number => { return +new Date + serverTimeOffset}
 var tile_set:Anim[]
 
 const sketch = (s:any) => {
@@ -151,7 +151,7 @@ setInterval(() => {
             y: player.y,
         },
         rotation: player.rot,
-        velocity: 0,
+        velocity: player.velX + player.velY != 0 ? 2 : 0,
     }
     socket.emit('playerUpdateState', p);
 }, NETWORK_TICK_MS);
