@@ -2,6 +2,7 @@
 import 'p5'
 import Sprite from './Sprite'
 import Anim from './Animation'
+import io from 'socket.io-client';
 
 var playerAnim:Anim;
 var player:Sprite;
@@ -26,3 +27,25 @@ const sketch = (s:any) => {
 
 //@ts-ignore
 const P5 = new p5(sketch)
+
+
+// Socket.io connection
+const socket = io();
+socket.on('connect', () => {
+    console.log("Connected to websocket");
+    socket.emit('joinRoom', {
+        name: 'jonny',
+        mode: 'player',
+    });
+
+    socket.on('joinRoom', (roomData: any) => {
+        console.log(roomData);
+    })
+
+    socket.on('serverError', err => {
+        console.log(err)
+        console.error(`[SERVER ERROR] ${err}`)
+    });
+});
+
+

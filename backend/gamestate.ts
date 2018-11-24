@@ -2,7 +2,7 @@
 
 export class GameRoom {
     name: string;
-    players: { [id: string]: Player }; // Lookup players by id
+    players: { [id: string]: Player } = {}; // Lookup players by id
     map: Map;
     seed: number;
 
@@ -11,7 +11,7 @@ export class GameRoom {
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
         let i = 0;
-        while (this.players[`player-${uNameAlpha}-${i.toString()}`] == undefined) {
+        while (this.players[`player-${uNameAlpha}-${i.toString()}`] !== undefined) {
             i++;
         }
 

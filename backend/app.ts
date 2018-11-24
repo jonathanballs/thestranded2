@@ -9,7 +9,7 @@ import { GameRoom, Map, Player } from './gamestate';
 // Create server
 const app = express();
 const server = createServer(app);
-const socket = SocketIO(server);
+const io = SocketIO(server);
 
 // Configure templating
 app.set('view engine', 'pug');
@@ -34,10 +34,10 @@ server.listen(port, () => {
 const rooms: GameRoom[] = [];
 
 // Handle socket.io connections
-socket.on('connection', function (socket) {
-    console.log(`Connection recieved from ${socket.id}`);
+io.on('connection', function (socket) {
 
-    socket.on('joinRoom', (userDetailsRaw) => {
+    socket.on('joinRoom', (userDetailsRaw: any) => {
+        console.log(`Connection recieved from ${socket.id}`);
         const schema = joi.object().keys({
             name: joi.string().alphanum().max(15).required(),
             mode: joi.string().only(['spectator', 'player']).required(),
@@ -61,7 +61,10 @@ socket.on('connection', function (socket) {
 
             // Create player and add to room
             const p = new Player(userDetails.name, userDetails.characterSpriteId);
+            console.log(p);
             rooms[userDetails.roomName].addPlayer(p);
+
+
 
             // Save user details to the socket object
             this.userId = p.id;
@@ -74,8 +77,9 @@ socket.on('connection', function (socket) {
                     seed: rooms[this.roomName].seed,
                 }
             });
-        }).catch((err) => {
-            socket.emit('serverError', `Bad input to joinRoom: ${userDetailsRaw}: ${err}`);
+        }).catch((err: any) => {
+            console.log(err);
+            socket.emit('serverError', `joinRoom: ${JSON.stringify(userDetailsRaw)}: ${err}`);
         })
     })
 });
