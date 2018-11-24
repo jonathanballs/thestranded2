@@ -20,9 +20,7 @@ app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Render index.html
 app.get('/', (req, res) => {
-    res.render('index', {
-        title: "The Template",
-    });
+    res.sendFile('index.html', { root: __dirname + '/static/' });
 });
 
 // Finally serve the application
