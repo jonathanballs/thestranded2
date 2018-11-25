@@ -119,6 +119,7 @@ io.on('connection', function (socket: any) {
 
     socket.on('playerFiresBullet', (bulletInfoRaw: any) => {
         const schema = joi.object().keys({
+            shotBy: joi.string().required(),
             data: entityDataSchema,
         });
 

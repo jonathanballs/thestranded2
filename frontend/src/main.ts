@@ -9,7 +9,7 @@ import Human from './Sprite'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, debug} from './utils'
 import io from 'socket.io-client';
 
-const socket = io();
+let socket:SocketIOClient.Socket// = io();
 
 const [width, height] = CANVAS_SIZE
 var playerId:string;
@@ -25,7 +25,8 @@ const getServerTime = (): number => { return +new Date + serverTimeOffset}
 var tile_set:Anim[]
 
 let gameState:any = {
-    players: {}
+    players: {},
+    bullets: {}
 }
 
 const sketch = (s:any) => {
@@ -40,6 +41,8 @@ const sketch = (s:any) => {
         projectlieImage = s.loadImage('/static/imgs/blue.png')
     }
     s.setup = () => {
+        socket = io()
+        listen()
         s.createCanvas(width, height)
         s.imageMode(s.CENTER)
         s.rectMode(s.CENTER)
@@ -112,6 +115,7 @@ const sketch = (s:any) => {
 
         // Send bullet to the server
         socket.emit('playerFiresBullet', {
+            shotBy: playerId,
             data: projectile.data
         });
 
@@ -124,48 +128,67 @@ const sketch = (s:any) => {
 const P5 = new p5(sketch)
 
 // Socket.io connection
-socket.on('connect', () => {
-    console.log("Connected to websocket");
+function listen() {
+    socket.on('connect', () => {
+        console.log("Connected to websocket");
 
-    startLatencyDetection(socket);
-    // Join a room
-    socket.emit('joinRoom', {
-        name: 'jonny',
-        mode: 'player',
-    });
+        startLatencyDetection(socket);
+        // Join a room
+        socket.emit('joinRoom', {
+            name: 'jonny',
+            mode: 'player',
+        });
 
-    // Recieve back player and room data
-    socket.on('joinRoom', (roomData: any) => {
-        console.log(roomData);
-        if(roomData.player != null) {
-            playerId = roomData.player.id
-        }
-    })
-
-    socket.on('serverError', (err: any) => {
-        console.log(err)
-        console.error(`[SERVER ERROR] ${err}`)
-    });
-
-    // When a game snapshot is received from the server
-    socket.on('mapSnapshot', (snapshot: any) => {
-        const playerIds = Object.keys(snapshot.players)
-        // console.log(snapshot.players, gameState.players)
-        for(let id of playerIds) {
-            if(id == playerId) { continue }
-            // console.log(id, playerId)
-            const human = snapshot.players[id]
-            if(gameState.players[id] == null) {
-                debug(`${playerId} has joined`)
-                gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
-            } else {
-                debug(`${playerId} has been updated`)
-                gameState.players[id].data = human.data
+        // Recieve back player and room data
+        socket.on('joinRoom', (roomData: any) => {
+            console.log(roomData);
+            if(roomData.player != null) {
+                playerId = roomData.player.id
             }
-        }
-    });
-});
+        })
 
+        socket.on('serverError', (err: any) => {
+            console.log(err)
+            console.error(`[SERVER ERROR] ${err}`)
+        });
+
+        // When a game snapshot is received from the server
+        socket.on('mapSnapshot', (snapshot: any) => {
+            const playerIds = Object.keys(snapshot.players)
+            for(let id of playerIds) {
+                if(id == playerId) { continue }
+                // console.log(id, playerId)
+                const human = snapshot.players[id]
+                if(gameState.players[id] == null) {
+                    debug(`${playerId} has joined`)
+                    gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
+                } else {
+                    // debug(`${playerId} has been updated`)
+                    gameState.players[id].data = human.data
+                }
+            }
+            for(let bullet of snapshot.bullets) {
+                if(bullet.shotBy == playerId) {
+                    //console.log('ignore bullet')
+                    continue
+                }
+                const bulletId = `${bullet.shotBy}-${bullet.timestampUpdated}`
+                if(gameState.bullets[bulletId] == null) {
+                    debug(`creating bullet with id ${bulletId}`)
+                    debug(bullet)
+                    const projectile = new Projectile(
+                        projectlieImage,
+                        bullet.data.x,
+                        bullet.data.y,0)
+                    projectile.data.velX = bullet.data.velX
+                    projectile.data.velY = bullet.data.velY
+                    gameState.bullets[bulletId] = bullet
+                    projectiles.push(projectile)
+                }
+            }
+        });
+    });
+}
 
 // Periodically pings the server and detects latency
 function startLatencyDetection(socket: SocketIOClient.Socket) {

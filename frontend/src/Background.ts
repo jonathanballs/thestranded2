@@ -7,7 +7,7 @@ import Player from './Player';
 
 const MAP_SIZE = 200
 const NOISE_MULTIPLIER = 0.1
-const DRAW_RADIUS = 250 // Squared
+const DRAW_RADIUS = 30 // Squared
 
 export default class Background {
     tile_set: Anim[]
@@ -38,12 +38,10 @@ export default class Background {
         if(this.player == null){ return }
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
-                const distanceFromPlayer = Math.abs(
-                    Math.pow((x-MAP_SIZE/2) - this.player.data.x,2) +
-                    Math.pow((y-MAP_SIZE/2) - this.player.data.y,2)
-                )
+                const deltaX = Math.abs((x-MAP_SIZE/2) - this.player.data.x) < 20
+                const deltaY = Math.abs((y-MAP_SIZE/2) - this.player.data.y) < 10
                 // console.log(distanceFromPlayer)
-                if(distanceFromPlayer < DRAW_RADIUS) {
+                if(deltaX && deltaY) {
                     this.map[y][x].draw(s, false)
                 }
             }
