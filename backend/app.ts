@@ -163,9 +163,6 @@ setInterval(() => {
         }
         for(let zombieId of Object.keys(r.enemies)) {
             if(isZombie(r.enemies[zombieId])) {
-                console.log(r.enemies[zombieId].data.velX);
-                console.log(r.enemies[zombieId].data.velY);
-                console.log(r.enemies[zombieId].data.rot);
                 //@ts-ignore
                 r.enemies[zombieId].update(r)
             }
