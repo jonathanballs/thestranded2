@@ -39,8 +39,8 @@ export default class Background {
         if(this.player == null){ return }
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
-                const deltaX = Math.abs((x-MAP_SIZE/2) - this.player.data.x) < 20
-                const deltaY = Math.abs((y-MAP_SIZE/2) - this.player.data.y) < 10
+                const deltaX = Math.abs((x-MAP_SIZE/2) - this.player.data.x) < 40
+                const deltaY = Math.abs((y-MAP_SIZE/2) - this.player.data.y) < 30
                 // console.log(distanceFromPlayer)
                 if(deltaX && deltaY) {
                     this.map[y][x].draw(s, false)
