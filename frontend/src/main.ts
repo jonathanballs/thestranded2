@@ -104,7 +104,7 @@ const sketch = (s:any) => {
             if(zombie.isColliding(s,player)) {
                 player.data.health.cur -= 1
                 if(player.data.health.cur <= 0) {
-                    gg(s)
+                    gg(s, player.data.id);
                 }
             }
             zombie.draw(s)
@@ -167,11 +167,12 @@ const sketch = (s:any) => {
     }
 }
 
-function gg(s:any) {
+function gg(s:any, deadPlayerId: string) {
     console.log(gg)
     socket.disconnect()
     s.noLoop()
     document.getElementById('defaultCanvas0').style.filter = 'saturate(0.2%'
+    socket.emit('playerKilled', { playerId: deadPlayerId });
 }
 
 //@ts-ignore

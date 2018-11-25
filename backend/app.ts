@@ -2,7 +2,7 @@ import { createServer, Server } from 'http';
 import * as path from 'path';
 import SocketIO from 'socket.io';
 import express from 'express';
-import joi, { number } from 'joi';
+import joi, { number, any } from 'joi';
 
 import { GameRoom, Player, Zombie, Enemy } from './gamestate';
 import { thisExpression, throwStatement } from 'babel-types';
@@ -157,6 +157,13 @@ io.on('connection', function (socket: any) {
             socket.emit('serverError',
               `playerFiresBullet: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
         })
+    })
+
+    socket.on('playerKilled', (pId: any) => {
+        if (socket.room && pId.playerId) {
+            socket.room.players = 
+                socket.room.players.filter((p: any) => p.data.id != pId.playerId);
+        }
     })
 
     // Allow clients to calculate latency
