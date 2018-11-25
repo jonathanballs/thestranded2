@@ -118,10 +118,6 @@ export class Zombie extends Enemy {
     }
 
     update(state: GameRoom) {
-        if(Object.keys(state.players).length == 0) {
-            return
-        }
-
         const timeDelta = Date.now() - this.data.timestampUpdated;
         if (timeDelta < 100) {
             return;
@@ -129,6 +125,7 @@ export class Zombie extends Enemy {
 
         this.data.timestampUpdated = Date.now();
         const nearestPlayer = this.nearestPlayer(state.players);
+        console.log(nearestPlayer);
         if (!nearestPlayer) {
             this.data.velX = 0;
             this.data.velY = 0;

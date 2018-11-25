@@ -198,7 +198,7 @@ setInterval(() => {
         // Add a zombie
         const r = rooms[roomId];
 
-        if (Object.keys(r.enemies).length < 10) {
+        if (Object.keys(r.enemies).length < (5 * Object.keys(r.enemies).length)) {
             r.addEnemy(new Zombie);
         }
         for(let zombieId of Object.keys(r.enemies)) {

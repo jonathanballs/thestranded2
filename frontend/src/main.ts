@@ -250,15 +250,14 @@ function listen() {
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
                     gameState.players[id] = new Human(id, playerAnim, human.data.x, human.data.y)
-                    gameState.players[id].name = snapshot.players[id].name;
-                    gameState.players[id].latency = snapshot.players[id].latency;
                 } else {
                     // debug(`${playerId} has been updated`)
                     gameState.players[id].data = human.data
-                    gameState.players[id].name = human.name
-                    gameState.players[id].latency = human.latency
                     // console.log(gameState.players[id]);
                 }
+                gameState.players[id].name = snapshot.players[id].name;
+                gameState.players[id].latency = snapshot.players[id].latency;
+                gameState.players[id].points = human.points
             }
             //handle zombies
             const zombieIds = Object.keys(snapshot.enemies)
