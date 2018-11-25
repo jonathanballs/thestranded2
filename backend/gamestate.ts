@@ -11,14 +11,14 @@ export class GameRoom {
     addPlayer(player: Player) {
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
-        player.id = this.getAvailableId(uNameAlpha)
-        this.players[player.id] = player;
+        player.data.id = this.getAvailableId(uNameAlpha)
+        this.players[player.data.id] = player;
         // TODO: Set their position etc.
     }
 
     addEnemy(enemy: Enemy) {
-        enemy.id = this.getAvailableId(enemy.type);
-        this.enemies[enemy.id] = enemy;
+        enemy.data.id = this.getAvailableId(enemy.type);
+        this.enemies[enemy.data.id] = enemy;
     }
 
     getAvailableId(prefix: string): string {
@@ -53,16 +53,16 @@ export class LivingEntity {
             + Math.pow(entity.data.y - this.data.y, 2));
     }
 
-    id: string;
     type: string; // player/zombie etc.
     data: { 
+        id: string,
         x: number,
         y: number,
         rot: number,
         velX: number, 
         velY: number, 
         timestampUpdated: number, 
-    } = { x: 0, y: 0, rot: 0, velX: 0, velY: 0, timestampUpdated: Date.now()}
+    } = { id: '', x: 0, y: 0, rot: 0, velX: 0, velY: 0, timestampUpdated: Date.now()}
 }
 
 // Human controlled player
@@ -89,6 +89,8 @@ export class Zombie extends Enemy {
     constructor() {
         super('zombie');
         this.data.timestampUpdated = Date.now();
+        this.data.x = Math.floor(Math.random() * 100) - 50
+        this.data.y = Math.floor(Math.random() * 100) - 50
     }
 
     nearestPlayer(players: {[pId: string]: Player }) {

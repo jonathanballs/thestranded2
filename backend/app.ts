@@ -35,6 +35,7 @@ server.listen(port, () => {
 const rooms: { [roomId: string]: GameRoom } = {};
 
 const entityDataSchema = joi.object().keys({
+    id: joi.string(),
     x: joi.number(),
     y: joi.number(),
     velX: joi.number(),
@@ -82,7 +83,7 @@ io.on('connection', function (socket: any) {
             rooms[userDetails.roomName].addPlayer(p);
 
             // Save user details to the socket object
-            socket.playerId = p.id;
+            socket.playerId = p.data.id;
             socket.roomName = userDetails.roomName;
             socket.room = rooms[socket.roomName];
             socket.join(socket.roomName);
@@ -118,6 +119,24 @@ io.on('connection', function (socket: any) {
               `playerUpdateState: ${JSON.stringify(pStateRaw)}: ${err}`);
         })
     });
+
+    // Remove bullet from gamestate
+    socket.on('destroyBullet', (data:{id:string}) => {
+        //@ts-ignore
+        const index = socket.room.bullets.map(b => b.data.id).indexOf(data.id)
+        socket.room.bullets.splice(index, 1)
+        console.log(`${data.id} destroyed`)
+    })
+
+    // Remove bullet from gamestate
+    socket.on('collision', (data:{zombie:string, bullet:string}) => {
+        //@ts-ignore
+        const index = socket.room.bullets.map(b => b.data.id).indexOf(data.bullet)
+        socket.room.bullets.splice(index, 1)
+        console.log(`${data.bullet} destroyed`)
+        delete socket.room.enemies[data.zombie]
+        console.log(`${data.zombie} destroyed`)
+    })
 
     socket.on('playerFiresBullet', (bulletInfoRaw: any) => {
         const schema = joi.object().keys({
@@ -159,7 +178,7 @@ setInterval(() => {
         // Add a zombie
         const r = rooms[roomId];
 
-        if (Object.keys(r.enemies).length < 1) {
+        if (Object.keys(r.enemies).length < 10) {
             r.addEnemy(new Zombie);
         }
         for(let zombieId of Object.keys(r.enemies)) {

@@ -51,7 +51,7 @@ const sketch = (s:any) => {
         s.createCanvas(width, height)
         s.imageMode(s.CENTER)
         s.rectMode(s.CENTER)
-        player = new Player(playerAnim, 200, 200)
+        player = new Player(playerId, playerAnim, 200, 200)
         player.data.x = 5
         player.data.y = 5
         background.addPlayer(player)
@@ -92,14 +92,23 @@ const sketch = (s:any) => {
         for(let i=0; i < zIds.length; i++) {
             const zombie: Zombie = gameState.enemies[zIds[i]]
             zombie.draw(s)
-            projectiles.forEach(proj => {
-                proj.isColliding(s, zombie)
+            projectiles.forEach((proj,i) => {
+                if(proj.isColliding(s, zombie)) {
+                    socket.emit('collision', {
+                        zombie: zombie.data.id,
+                        bullet: proj.data.id,
+                    })
+                    projectiles.splice(i, 1)
+                }
             })
         }
 
         // Projectiles
         for(let i = 0; i < projectiles.length; i++) {
             if(projectiles[i].alive == false) {
+                socket.emit('destroyBullet', {
+                    id: projectiles[i].data.id
+                })
                 projectiles.splice(i, 1)
                 continue
             }
@@ -122,12 +131,14 @@ const sketch = (s:any) => {
         const deltaX = distance * Math.cos(player.data.rot)
         const deltaY = distance * Math.sin(player.data.rot)
         const projectile = new Projectile(
+            `bullet-${playerId}-${Date.now().toString()}`,
             projectlieImage,
             player.data.x + deltaX,
             player.data.y + deltaY,
             player.data.rot)
 
         // Send bullet to the server
+        console.log(playerId)
         socket.emit('playerFiresBullet', {
             shotBy: playerId,
             data: projectile.data
@@ -156,7 +167,7 @@ function listen() {
         socket.on('joinRoom', (roomData: any) => {
             console.log(roomData);
             if(roomData.player != null) {
-                playerId = roomData.player.id
+                playerId = roomData.player.data.id
             }
         })
 
@@ -176,7 +187,7 @@ function listen() {
                 const human = snapshot.players[id]
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
-                    gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
+                    gameState.players[id] = new Human(id, playerAnim, human.data.x, human.data.y)
                 } else {
                     // debug(`${playerId} has been updated`)
                     gameState.players[id].data = human.data
@@ -189,7 +200,7 @@ function listen() {
                 // console.log(zombie)
                 if(gameState.enemies[id] == null) {
                     debug(`${id} spawned`)
-                    gameState.enemies[id] = new Zombie(zombieAnim, zombie.data.x, zombie.data.y)
+                    gameState.enemies[id] = new Zombie(id, zombieAnim, zombie.data.x, zombie.data.y)
                 } else {
                     gameState.enemies[id].data = zombie.data
                 }
@@ -199,11 +210,12 @@ function listen() {
                 if(bullet.shotBy == playerId) {
                     continue
                 }
-                const bulletId = `${bullet.shotBy}-${bullet.timestampUpdated}`
+                const bulletId = bullet.data.id
                 if(gameState.bullets[bulletId] == null) {
                     debug(`creating bullet with id ${bulletId}`)
                     debug(bullet)
                     const projectile = new Projectile(
+                        bulletId,
                         projectlieImage,
                         bullet.data.x,
                         bullet.data.y,0)

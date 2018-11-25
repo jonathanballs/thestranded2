@@ -7,8 +7,8 @@ const MAX_VEL = 20
 export default class Projectile extends Sprite{
     alive: boolean
     renderedFor: number
-    constructor(look: p5.Image, x:number, y:number, rot:number) {
-        super(look, x, y, 10,10)
+    constructor(id:string, look: p5.Image, x:number, y:number, rot:number) {
+        super(id, look, x, y, 10,10)
         this.data.rot = rot
         this.data.velX = MAX_VEL * Math.cos(rot)
         this.data.velY = MAX_VEL * Math.sin(rot)

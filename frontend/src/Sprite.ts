@@ -6,6 +6,7 @@ import { TILE_SIZE, DEBUG, debug } from './utils'
 
 export default class Sprite {
     data: {
+        id: string
         x: number
         y: number
         rot: number
@@ -16,8 +17,9 @@ export default class Sprite {
     width: number
     height: number
     look: Anim | p5.Image
-    constructor(look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
+    constructor(id:string='player', look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
         this.data = {
+            id,
             x, y, 
             rot: 0,
             velX: 0,
@@ -62,6 +64,7 @@ export default class Sprite {
         const distance2 = Math.pow(this.data.y - target.data.y,2) + Math.pow(this.data.x - target.data.x,2)
         const collisionDistance = Math.pow(this.width/TILE_SIZE,2) + Math.pow(target.width/TILE_SIZE, 2)
         if(DEBUG){
+            s.stroke(collisionDistance/distance2 * 255)
             s.line(
                 this.data.x * TILE_SIZE,
                 this.data.y * TILE_SIZE,
