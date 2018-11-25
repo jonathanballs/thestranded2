@@ -124,6 +124,9 @@ export class Zombie extends Enemy {
         var delta_x = diff_x / dist_div;
         var delta_y = diff_y / dist_div;
 
+        this.data.velX = (delta_x / timeDelta) * 1000;
+        this.data.velY = (delta_y / timeDelta) * 1000;
+
         // Update the rotation and position of the Zombie.
         this.data.rot = Math.atan2(diff_y, diff_x);
         this.data.x = this.data.x + delta_x;
