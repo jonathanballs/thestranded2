@@ -115,6 +115,9 @@ export class Zombie extends Enemy {
         const timeDelta = Date.now() - this.timestampUpdated;
         this.timestampUpdated = Date.now();
         const nearestPlayer = this.nearestPlayer(state.players);
+        if (!nearestPlayer) {
+            return;
+        }
 
         var diff_x = nearestPlayer.data.x - this.data.x;
         var diff_y = nearestPlayer.data.y - this.data.y;
