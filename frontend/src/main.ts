@@ -157,13 +157,16 @@ socket.on('connect', () => {
             if(id == playerId) { continue }
             // console.log(id, playerId)
             const human = snapshot.players[id]
-            if(gameState.players[id] == null) {
+            if(human == null) {
+                if (human.data == null) { continue }
+                // console.log(human)
                 // debug(`${id} has joined`)
-                gameState.players[id] = new Human(playerAnim, human.pos.x, human.pos.y)
+                gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
             } else {
+                if (human.data == null) { continue }
                 // debug(`${id} has been updated`)
                 // console.log(human.pos)
-                gameState.players[id].data = human
+                gameState.players[id].data = human.data
             }
         }
     });
@@ -195,5 +198,6 @@ setInterval(() => {
         latency: serverLatency,
         data: player.data
     }
+    console.log(player.data)
     socket.emit('playerUpdateState', p);
 }, NETWORK_TICK_MS);
