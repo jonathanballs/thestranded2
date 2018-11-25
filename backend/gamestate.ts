@@ -11,8 +11,6 @@ export class GameRoom {
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
         let i = 0;
-        console.log("======================hh")
-        console.log(this.players);
         while (true) {
             player.id = `player-${uNameAlpha}-${i.toString()}`;
             if (this.players[player.id] === undefined) {
@@ -21,8 +19,6 @@ export class GameRoom {
             }
             i++;
         }
-        console.log(player.id);
-
 
         // TODO: Set their position etc.
     }

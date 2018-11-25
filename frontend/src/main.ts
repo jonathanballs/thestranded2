@@ -147,7 +147,6 @@ socket.on('connect', () => {
 
     // When a game snapshot is received from the server
     socket.on('mapSnapshot', (snapshot: any) => {
-        console.log(snapshot);
         const playerIds = Object.keys(snapshot.players)
         for(let id of playerIds) {
             if(id == playerId) { continue }
