@@ -160,6 +160,7 @@ socket.on('connect', () => {
                 // console.log(human.pos)
                 gameState.players[id].x = human.pos.x
                 gameState.players[id].y = human.pos.y
+                gameState.players[id].rotation = human.rot
                 const velX = human.currentVelocity * Math.cos(human.rot)
                 const velY = human.currentVelocity * Math.sin(human.rot)
                 gameState.players[id].velX = human.velX
