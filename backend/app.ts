@@ -34,6 +34,7 @@ server.listen(port, () => {
 
 const rooms: { [roomId: string]: GameRoom } = {};
 
+// Shared data interface
 const entityDataSchema = joi.object().keys({
     id: joi.string(),
     x: joi.number(),

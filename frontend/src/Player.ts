@@ -3,13 +3,18 @@ import 'p5'
 import Sprite from './Sprite'
 import Anim from './Animation'
 import { CANVAS_SIZE, TILE_SIZE, DEBUG } from './utils'
+import Background from './Background';
 
 const [width, height] = CANVAS_SIZE
 
-const PLAYER_SPEED = 10
+let PLAYER_SPEED = 10
 
 export default class Player extends Sprite {
-    update(timeDelta: number, s:any) {
+    update(timeDelta: number, s:any, background:Background) {
+        const level = background.getLevel(s, this.data.x, this.data.y)
+        if(level == 0) { PLAYER_SPEED = 3 }
+        else if(level == 1) { PLAYER_SPEED = 7}
+        else { PLAYER_SPEED = 10 }
         this.data.rot = Math.atan2(s.mouseY - (height / 2), s.mouseX - (width / 2))
 
         this.data.velX = 0

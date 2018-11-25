@@ -2,10 +2,9 @@
 import 'p5'
 import Anim from './Animation'
 import { TILE_SIZE, DEBUG, debug } from './utils'
+import Background from './Background';
 
-
-export default class Sprite {
-    data: {
+export interface SharedData {
         id: string
         x: number
         y: number
@@ -13,7 +12,10 @@ export default class Sprite {
         velX: number
         velY: number
         timestampUpdated: number
-    }
+}
+
+export default class Sprite {
+    data: SharedData
     width: number
     height: number
     look: Anim | p5.Image
@@ -37,7 +39,7 @@ export default class Sprite {
         this.look = look
     }
 
-    update(timeDelta: number, s:any) {
+    update(timeDelta: number, s:any, background?:Background) {
         const mult = timeDelta/1000
         this.data.x += this.data.velX * mult
         this.data.y += this.data.velY * mult

@@ -48,4 +48,12 @@ export default class Background {
             }
         }
     }
+    
+    getLevel(s:any, x:number, y:number) {
+        const rx = Math.round(x + MAP_SIZE/2)
+        const ry = Math.round(y + MAP_SIZE/2)
+        const noise = s.noise(rx*NOISE_MULTIPLIER, ry*NOISE_MULTIPLIER)
+        const index = Math.floor(noise * this.tile_set.length)
+        return index;
+    }
 }

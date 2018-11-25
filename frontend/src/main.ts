@@ -78,7 +78,7 @@ const sketch = (s:any) => {
 
         // Player
         player.draw(s)
-        player.update(timeDiff, s)
+        player.update(timeDiff, s, background)
 
         // Draw gamestate
         const hIds = Object.keys(gameState.players)
