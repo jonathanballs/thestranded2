@@ -104,22 +104,18 @@ const sketch = (s:any) => {
         const distance = 0.5
         const deltaX = distance * Math.cos(player.data.rot)
         const deltaY = distance * Math.sin(player.data.rot)
-        // Send bullet to the server
-        socket.emit('playerFiresBullet', {
-            pos: {
-                x: player.data.x + deltaX,
-                y: player.data.y + deltaY,
-            },
-            rotation: player.data.rot,
-        });
-
-        projectiles.push(new Projectile(
+        const projectile = new Projectile(
             projectlieImage,
             player.data.x + deltaX,
             player.data.y + deltaY,
             player.data.rot)
-        ) 
 
+        // Send bullet to the server
+        socket.emit('playerFiresBullet', {
+            data: projectile.data
+        });
+
+        projectiles.push(projectile) 
     }
 }
 
@@ -158,15 +154,9 @@ socket.on('connect', () => {
             // console.log(id, playerId)
             const human = snapshot.players[id]
             if(human == null) {
-                if (human.data == null) { continue }
-                // console.log(human)
-                // debug(`${id} has joined`)
                 gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
             } else {
-                if (human.data == null) { continue }
-                // debug(`${id} has been updated`)
-                // console.log(human.pos)
-                gameState.players[id].data = human.data
+                gameState.players[id] = { data: human.data }
             }
         }
     });

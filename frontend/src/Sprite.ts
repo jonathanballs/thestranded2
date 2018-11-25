@@ -16,11 +16,12 @@ export default class Sprite {
     height: number
     look: Anim | p5.Image
     constructor(look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
-        this.data.x = x
-        this.data.y = y
-        this.data.rot = 0
-        this.data.velX = 0
-        this.data.velY = 0
+        this.data = {
+            x, y, 
+            rot: 0,
+            velX: 0,
+            velY: 0,
+        }
         if (width != null && height != null) {
             this.width = width
             this.height = height
