@@ -6,7 +6,7 @@ import { CANVAS_SIZE, TILE_SIZE, DEBUG } from './utils'
 
 const [width, height] = CANVAS_SIZE
 
-const PLAYER_SPEED = 1
+const PLAYER_SPEED = 10
 
 export default class Player extends Sprite {
     update(timeDelta: number, s:any) {
@@ -18,7 +18,7 @@ export default class Player extends Sprite {
         if(s.keyIsDown(s.RIGHT_ARROW) || s.keyIsDown(68)){ this.data.velX = PLAYER_SPEED }
         if(s.keyIsDown(s.UP_ARROW) || s.keyIsDown(87)){ this.data.velY = -PLAYER_SPEED }
         if(s.keyIsDown(s.DOWN_ARROW) || s.keyIsDown(83)){ this.data.velY = PLAYER_SPEED }
-        const mult = timeDelta/100
+        const mult = timeDelta/1000
         this.data.x += this.data.velX * mult
         this.data.y += this.data.velY * mult
     }

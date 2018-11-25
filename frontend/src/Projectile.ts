@@ -15,16 +15,17 @@ export default class Projectile extends Sprite{
         this.alive = true
     }
 
-    draw(s:any) {
-        if(Date.now() - this.data.timestampUpdated > LIFE_TIME) {
+    draw(s:any, time:number=Date.now(), noDebug:boolean = DEBUG) {
+        const startTime = Date.now()
+        if(time - this.data.timestampUpdated > LIFE_TIME) {
             this.alive = false
             return
         }
-        const timeDelta = (Date.now() - this.data.timestampUpdated) / 1000
-        const x = (this.data.x + (timeDelta* this.data.velX)) * TILE_SIZE
-        const y = (this.data.y + (timeDelta* this.data.velY)) * TILE_SIZE
+        const timeDelta = (time - this.data.timestampUpdated) / 1000
+        this.data.x = (this.data.x + (timeDelta * this.data.velX))
+        this.data.y = (this.data.y + (timeDelta * this.data.velY))
         s.push()
-        s.translate(x,y)
+        s.translate(this.data.x * TILE_SIZE ,this.data.y * TILE_SIZE)
         s.fill('black')
         s.noStroke()
         s.ellipse(0,0,10)
@@ -34,5 +35,6 @@ export default class Projectile extends Sprite{
             s.ellipse(0,0, this.width)
         }
         s.pop()
+        this.data.timestampUpdated = time + (Date.now() - startTime)
     }
 }

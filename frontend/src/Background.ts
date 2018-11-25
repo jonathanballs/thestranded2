@@ -43,7 +43,7 @@ export default class Background {
                 const deltaY = Math.abs((y-MAP_SIZE/2) - this.player.data.y) < 30
                 // console.log(distanceFromPlayer)
                 if(deltaX && deltaY) {
-                    this.map[y][x].draw(s, false)
+                    this.map[y][x].draw(s, Date.now(), false)
                 }
             }
         }

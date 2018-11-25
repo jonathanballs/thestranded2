@@ -36,12 +36,12 @@ export default class Sprite {
     }
 
     update(timeDelta: number, s:any) {
-        const mult = timeDelta/100
+        const mult = timeDelta/1000
         this.data.x += this.data.velX * mult
         this.data.y += this.data.velY * mult
     }
 
-    draw(s:any, noDebug:boolean = DEBUG) {
+    draw(s:any, time:number=Date.now(), noDebug:boolean = DEBUG) {
         s.push()
         s.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE)
         s.rotate(this.data.rot)
@@ -56,5 +56,15 @@ export default class Sprite {
             s.ellipse(0,0, this.width)
         }
         s.pop()
+    }
+
+    isColliding(target:Sprite): boolean {
+        const distance2 = Math.pow(this.data.y - target.data.y,2) + Math.pow(this.data.x - target.data.x,2)
+        const collisionDistance = Math.pow(this.width,2) + Math.pow(target.width, 2)
+        if(distance2 < collisionDistance) {
+            debug(this.data, 'collided with', target)
+            return true
+        }
+        return false
     }
 }

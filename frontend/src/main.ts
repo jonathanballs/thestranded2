@@ -90,9 +90,8 @@ const sketch = (s:any) => {
 
         const zIds = Object.keys(gameState.enemies)
         for(let i=0; i < zIds.length; i++) {
-            const zombie: Human = gameState.enemies[zIds[i]]
+            const zombie: Zombie = gameState.enemies[zIds[i]]
             zombie.draw(s)
-            // zombie.update(timeDiff, s)
         }
 
         // Projectiles
