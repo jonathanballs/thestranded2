@@ -34,6 +34,14 @@ server.listen(port, () => {
 
 const rooms: { [roomId: string]: GameRoom } = {};
 
+const entityDataSchema = joi.object().keys({
+    x: joi.number(),
+    y: joi.number(),
+    velX: joi.number(),
+    velY: joi.number(),
+    rot: joi.number(),
+});
+
 // Handle socket.io connections
 io.on('connection', function (socket: any) {
 
@@ -94,24 +102,14 @@ io.on('connection', function (socket: any) {
         if (!socket.playerId) return; // safety
 
         const schema = joi.object().keys({
+            data: entityDataSchema,
             timestamp: joi.date(),
             latency: joi.number(),
-            pos: joi.object().keys({
-                x: joi.number(),
-                y: joi.number(),
-            }).required(),
-            rotation: joi.number(),
-            velX: joi.number(),
-            velY: joi.number(),
         }).required();
 
         joi.validate(pStateRaw, schema).then(pState => {
             const ps = socket.room.players;
-            ps[socket.playerId].pos = pState.pos;
-            ps[socket.playerId].latency = pState.latency;
-            ps[socket.playerId].rotation = pState.rotation;
-            ps[socket.playerId].velX = pState.velX;
-            ps[socket.playerId].velY = pState.velY;
+            ps[socket.playerId].data = pState.data;
             ps[socket.playerId].timestampUpdated = Date.now();
         }).catch(err => {
             socket.emit('serverError',
@@ -121,17 +119,16 @@ io.on('connection', function (socket: any) {
 
     socket.on('playerFiresBullet', (bulletInfoRaw: any) => {
         const schema = joi.object().keys({
-            pos: joi.object().keys({
-                x: joi.number(),
-                y: joi.number(),
-            }),
-            rotation: joi.number(),
+            data: entityDataSchema,
         });
 
         joi.validate(bulletInfoRaw, schema).then(bulletInfo => {
             bulletInfo.timestampUpdated
             // Record bullets onto the location
-        });
+        }).catch(err => {
+            socket.emit('serverError',
+              `joinRoom: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
+        })
     })
 
     // Allow clients to calculate latency
@@ -145,5 +142,6 @@ setInterval(() => {
     Object.keys(rooms).forEach(roomId => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
+        console.log(r);
     });
 }, NETWORK_TICK_MS);

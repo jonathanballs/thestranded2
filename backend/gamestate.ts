@@ -33,20 +33,20 @@ export class GameRoom {
 // Generic base class for "living things"; Zombies, players
 // and any other autonomous entity will subclass this.
 export class LivingEntity {
-    id: string;
-    type: string; // player/zombie etc.
-
     constructor(type: string) {
         this.type = type;
     }
 
-    pos: {
+    id: string;
+    type: string; // player/zombie etc.
+    data: {
         x: number,
         y: number,
+        rot: number;
+        velX: number;
+        velY: number;
     }
-    rotation: number;
-    currentVelocity: number;
-    maxVelocity: number;
+
     timestampUpdated: Date;
 }
 
