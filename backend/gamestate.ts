@@ -26,7 +26,7 @@ export class GameRoom {
         let id;
         while (true) {
             id = `${prefix}-${i.toString()}`;
-            if (this.players[id] === undefined) {
+            if (this.players[id] === undefined && this.enemies[id] === undefined) {
                 break;
             }
             i++;
