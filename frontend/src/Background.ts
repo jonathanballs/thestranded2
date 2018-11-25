@@ -39,8 +39,8 @@ export default class Background {
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
                 const distanceFromPlayer = Math.abs(
-                    Math.pow((x-MAP_SIZE/2) - this.player.x,2) +
-                    Math.pow((y-MAP_SIZE/2) - this.player.y,2)
+                    Math.pow((x-MAP_SIZE/2) - this.player.data.x,2) +
+                    Math.pow((y-MAP_SIZE/2) - this.player.data.y,2)
                 )
                 // console.log(distanceFromPlayer)
                 if(distanceFromPlayer < DRAW_RADIUS) {

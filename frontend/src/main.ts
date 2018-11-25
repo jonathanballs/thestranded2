@@ -44,8 +44,8 @@ const sketch = (s:any) => {
         s.imageMode(s.CENTER)
         s.rectMode(s.CENTER)
         player = new Player(playerAnim, 200, 200)
-        player.x = 5
-        player.y = 5
+        player.data.x = 5
+        player.data.y = 5
         background.addPlayer(player)
         lastUpdate = Date.now()
         // s.translate(width/2, height/2)
@@ -62,8 +62,8 @@ const sketch = (s:any) => {
         const timeDiff = curTime - lastUpdate
         // CAMERA
         s.translate(
-            (width/2 - (player.x * TILE_SIZE)),
-            (height/2 - (player.y * TILE_SIZE))
+            (width/2 - (player.data.x * TILE_SIZE)),
+            (height/2 - (player.data.y * TILE_SIZE))
         )
         // BACKGROUND
         background.draw(s)
@@ -95,24 +95,30 @@ const sketch = (s:any) => {
         if(DEBUG) {
             s.fill('black')
             s.stroke('red')
-            s.ellipse(0,0, 10)
+            s.rect(0,0, 2, 10)
+            s.rect(0,0, 10, 2)
         }
         s.pop()
     }
     s.mouseClicked = () => {
         const distance = 0.5
-        const deltaX = distance * Math.cos(player.rot)
-        const deltaY = distance * Math.sin(player.rot)
+        const deltaX = distance * Math.cos(player.data.rot)
+        const deltaY = distance * Math.sin(player.data.rot)
         // Send bullet to the server
         socket.emit('playerFiresBullet', {
             pos: {
-                x: player.x + deltaX,
-                y: player.y + deltaY,
+                x: player.data.x + deltaX,
+                y: player.data.y + deltaY,
             },
-            rotation: player.rot,
+            rotation: player.data.rot,
         });
 
-        projectiles.push(new Projectile(projectlieImage, player.x+deltaX, player.y+deltaY, player.rot)) 
+        projectiles.push(new Projectile(
+            projectlieImage,
+            player.data.x + deltaX,
+            player.data.y + deltaY,
+            player.data.rot)
+        ) 
 
     }
 }
@@ -157,13 +163,7 @@ socket.on('connect', () => {
             } else {
                 // debug(`${id} has been updated`)
                 // console.log(human.pos)
-                gameState.players[id].x = human.pos.x
-                gameState.players[id].y = human.pos.y
-                gameState.players[id].rotation = human.rot
-                const velX = human.currentVelocity * Math.cos(human.rot)
-                const velY = human.currentVelocity * Math.sin(human.rot)
-                gameState.players[id].velX = human.velX
-                gameState.players[id].velY = human.velY
+                gameState.players[id].data = human
             }
         }
     });
@@ -193,13 +193,7 @@ setInterval(() => {
     const p = {
         timestamp: getServerTime(),
         latency: serverLatency,
-        pos: {
-            x: player.x,
-            y: player.y,
-        },
-        rotation: player.rot,
-        velX: player.velX,
-        velY: player.velY
+        data: player.data
     }
     socket.emit('playerUpdateState', p);
 }, NETWORK_TICK_MS);

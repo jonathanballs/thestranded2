@@ -10,16 +10,16 @@ const PLAYER_SPEED = 1
 
 export default class Player extends Sprite {
     update(timeDelta: number, s:any) {
-        this.rot = Math.atan2(s.mouseY - (height / 2), s.mouseX - (width / 2))
+        this.data.rot = Math.atan2(s.mouseY - (height / 2), s.mouseX - (width / 2))
 
-        this.velX = 0
-        this.velY = 0
-        if(s.keyIsDown(s.LEFT_ARROW) || s.keyIsDown(65)){ this.velX = -PLAYER_SPEED }
-        if(s.keyIsDown(s.RIGHT_ARROW) || s.keyIsDown(68)){ this.velX = PLAYER_SPEED }
-        if(s.keyIsDown(s.UP_ARROW) || s.keyIsDown(87)){ this.velY = -PLAYER_SPEED }
-        if(s.keyIsDown(s.DOWN_ARROW) || s.keyIsDown(83)){ this.velY = PLAYER_SPEED }
+        this.data.velX = 0
+        this.data.velY = 0
+        if(s.keyIsDown(s.LEFT_ARROW) || s.keyIsDown(65)){ this.data.velX = -PLAYER_SPEED }
+        if(s.keyIsDown(s.RIGHT_ARROW) || s.keyIsDown(68)){ this.data.velX = PLAYER_SPEED }
+        if(s.keyIsDown(s.UP_ARROW) || s.keyIsDown(87)){ this.data.velY = -PLAYER_SPEED }
+        if(s.keyIsDown(s.DOWN_ARROW) || s.keyIsDown(83)){ this.data.velY = PLAYER_SPEED }
         const mult = timeDelta/100
-        this.x += this.velX * mult
-        this.y += this.velY * mult
+        this.data.x += this.data.velX * mult
+        this.data.y += this.data.velY * mult
     }
 }

@@ -7,8 +7,8 @@ export default class Tile extends Sprite {
         // s.push()
         // s.translate(this.x * TILE_SIZE, this.y * TILE_SIZE)
         s.image(this.look, 
-            this.x * TILE_SIZE,
-            this.y * TILE_SIZE,
+            this.data.x * TILE_SIZE,
+            this.data.y * TILE_SIZE,
             this.width, this.height)
         // s.pop()
     }
