@@ -184,11 +184,12 @@ function listen() {
             const zombieIds = Object.keys(snapshot.enemies)
             for(let id of zombieIds) {
                 const zombie = snapshot.enemies[id]
+                console.log(zombie)
                 if(gameState.enemies[id] == null) {
                     debug(`${id} spawned`)
                     gameState.enemies[id] = new Human(zombieAnim, zombie.data.x, zombie.data.y)
                 } else {
-                    // gameState.zombies[id].data = zombie.data
+                    gameState.enemies[id].data = zombie.data
                 }
             }
             //handle bullets
