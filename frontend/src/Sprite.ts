@@ -58,7 +58,6 @@ export default class Sprite {
         s.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE)
         s.noStroke()
         s.fill('green')
-        // this.data.health.cur -= 0.01
         s.rect(0,-50, s.map(
             this.data.health.cur,
             0,

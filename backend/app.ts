@@ -22,8 +22,11 @@ app.set('views', path.join(__dirname, '/views'));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Render index.html
-app.get('/', (req, res) => {
+app.get('/', (req,res) => {
     res.sendFile('index.html', { root: __dirname + '/static/' });
+})
+app.get('/game', (req, res) => {
+    res.sendFile('game.html', { root: __dirname + '/static/' });
 });
 
 // Finally serve the application
@@ -73,7 +76,7 @@ io.on('connection', function (socket: any) {
         joi.validate(userDetailsRaw, schema).then((userDetails) => {
             if (userDetails.mode == 'spectator') {
                 socket.emit('serverError', 'Spectator mode not supported');
-                return;
+                // return;
             }
 
             // Create room if doesn't exist
@@ -85,7 +88,7 @@ io.on('connection', function (socket: any) {
 
             // Create player and add to room
             const p = new Player(userDetails.name, userDetails.characterSpriteId);
-            rooms[userDetails.roomName].addPlayer(p);
+            rooms[userDetails.roomName].addPlayer(p, userDetails.mode == 'spectator');
 
             // Save user details to the socket object
             socket.playerId = p.data.id;

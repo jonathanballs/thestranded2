@@ -1,0 +1,32 @@
+*
+{
+    font-family:helvetica, sans-serif;
+}
+body
+{
+    margin:0px;
+}
+canvas
+{
+    -webkit-filter:contrast(1)grayscale(0.6)saturate(3) sepia(0.4)brightness(0.7);
+}
+#logo
+{
+    margin-right:auto;
+    margin-left:auto;
+    width:100%;
+}
+#menu
+{
+    width:400px;
+    height:30%;
+    text-align:center;
+    margin: 0px auto;
+    padding-top: 20%;
+}
+#menu input
+{
+    width: 200px;
+    margin-top:10px;
+    padding: 1em;
+}

@@ -22,6 +22,7 @@ import { globalAgent } from 'https';
 let socket:SocketIOClient.Socket// = io();
 
 const [width, height] = CANVAS_SIZE
+var SPECTATOR = false
 var gcCounter = GC_COUNT;
 var playerId:string;
 var playerAnim:Anim
@@ -79,10 +80,19 @@ const sketch = (s:any) => {
         const curTime = Date.now()
         const timeDiff = curTime - lastUpdate
         // CAMERA
-        s.translate(
-            (width/2 - (player.data.x * TILE_SIZE)),
-            (height/2 - (player.data.y * TILE_SIZE))
-        )
+        if(!SPECTATOR) {
+            s.translate(
+                (width/2 - (player.data.x * TILE_SIZE)),
+                (height/2 - (player.data.y * TILE_SIZE))
+            )
+        }else{
+            s.translate(
+                (width/2 - (player.data.x * TILE_SIZE)),
+                (height/2 - (player.data.y * TILE_SIZE))
+            )
+            s.scale(0.5)
+
+        }
         // BACKGROUND
         background.draw(s)
 
@@ -184,10 +194,18 @@ function listen() {
 
         startLatencyDetection(socket);
         // Join a room
-        socket.emit('joinRoom', {
-            name: 'jonny',
-            mode: 'player',
-        });
+        if(location.search.indexOf('?spectate=true') == -1) {
+            socket.emit('joinRoom', {
+                name: location.search.split('name=')[1],
+                mode: 'player',
+            });
+        } else {
+            SPECTATOR = true
+            socket.emit('joinRoom', {
+                name: location.search.split('name=')[1],
+                mode: 'spectator',
+            });
+        }
 
         // Recieve back player and room data
         socket.on('joinRoom', (roomData: any) => {
