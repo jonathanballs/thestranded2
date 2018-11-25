@@ -95,7 +95,8 @@ const sketch = (s:any) => {
         if(DEBUG) {
             s.fill('black')
             s.stroke('red')
-            s.ellipse(0,0, 10)
+            s.rect(0,0, 2, 10)
+            s.rect(0,0, 10, 2)
         }
         s.pop()
     }
