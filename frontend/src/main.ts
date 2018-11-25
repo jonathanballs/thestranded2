@@ -171,7 +171,7 @@ const sketch = (s:any) => {
     }
     s.mouseClicked = () => {
         if(SPECTATOR) { return }
-        if(Date.now() - lastShot < FIRE_RATE) {
+        if(Date.now() - lastShot < (FIRE_RATE - player.points * 100)) {
             return
         }
         lastShot = Date.now()
