@@ -47,8 +47,10 @@ io.on('connection', function (socket: any) {
 
     socket.on('disconnect', () => {
         // Remove player from game
-        delete socket.room.players[socket.playerId];
-        console.log(`${socket.playerId} has disconnected`);
+        if (socket.room) {
+            delete socket.room.players[socket.playerId];
+            console.log(`${socket.playerId} has disconnected`);
+        }
     });
 
     // Add the client to a server when they request to join a room
@@ -143,8 +145,7 @@ setInterval(() => {
     Object.keys(rooms).forEach(roomId => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
-        console.log(r);
-    });
+    })
 }, NETWORK_TICK_MS);
 
 function isZombie(enemy: Enemy): enemy is Zombie {
@@ -162,6 +163,9 @@ setInterval(() => {
         }
         for(let zombieId of Object.keys(r.enemies)) {
             if(isZombie(r.enemies[zombieId])) {
+                console.log(r.enemies[zombieId].data.velX);
+                console.log(r.enemies[zombieId].data.velY);
+                console.log(r.enemies[zombieId].data.rot);
                 //@ts-ignore
                 r.enemies[zombieId].update(r)
             }
