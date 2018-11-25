@@ -19,6 +19,7 @@ export interface SharedData {
 }
 
 export default class Sprite {
+    name: string
     data: SharedData
     width: number
     height: number
@@ -64,6 +65,15 @@ export default class Sprite {
             this.data.health.max,
             0,60
         ), 10)
+
+        if (this.name) {
+            s.fill('black')
+            s.textAlign(s.CENTER)
+            s.textSize(15);
+            s.rotate(0);
+            s.text(this.name, 0, -30);
+        }
+
         s.rotate(this.data.rot)
         if (this.look instanceof Anim) {
             s.image(this.look.imageList[0], 0, 0, this.width, this.height)
@@ -75,7 +85,8 @@ export default class Sprite {
             s.noFill()
             s.ellipse(0,0, this.width)
         }
-        s.pop()
+
+        s.pop();
     }
 
     isColliding(s:any, target:Sprite): boolean {

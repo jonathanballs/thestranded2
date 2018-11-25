@@ -71,6 +71,7 @@ export class LivingEntity {
 // Human controlled player
 export class Player extends LivingEntity {
     name: string;
+    points: number = 0;
     characterSpriteId: string;
     active: boolean = true;
 

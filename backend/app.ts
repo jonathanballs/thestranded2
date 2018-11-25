@@ -122,6 +122,7 @@ io.on('connection', function (socket: any) {
             const ps = socket.room.players;
             ps[socket.playerId].data = pState.data;
             ps[socket.playerId].timestampUpdated = Date.now();
+            ps[socket.playerId].latency = pState.latency;
         }).catch(err => {
             socket.emit('serverError',
               `playerUpdateState: ${JSON.stringify(pStateRaw)}: ${err}`);
@@ -131,7 +132,8 @@ io.on('connection', function (socket: any) {
     // Remove bullet from gamestate
     socket.on('destroyBullet', (data:{id:string}) => {
         //@ts-ignore
-        const index = socket.room.bullets.map(b => b.data.id).indexOf(data.id)
+        if (!socket.room) { return; }
+        const index = socket.room.bullets.map((b: any) => b.data.id).indexOf(data.id)
         socket.room.bullets.splice(index, 1)
         console.log(`${data.id} destroyed`)
     })
@@ -139,11 +141,14 @@ io.on('connection', function (socket: any) {
     // Remove bullet from gamestate
     socket.on('collision', (data:{zombie:string, bullet:string}) => {
         //@ts-ignore
-        const index = socket.room.bullets.map(b => b.data.id).indexOf(data.bullet)
+        if (!socket.room) { return; }
+        const index = socket.room.bullets.map((b: any) => b.data.id).indexOf(data.bullet)
         socket.room.bullets.splice(index, 1)
-        console.log(`${data.bullet} destroyed`)
         delete socket.room.enemies[data.zombie]
-        console.log(`${data.zombie} destroyed`)
+
+        const killerId = data.bullet.replace(/^bullet-/, "").replace(/-[0-9]+$/, "");
+        const k = socket.room.players[killerId];
+        if (k) k.points++;
     })
 
     socket.on('playerFiresBullet', (bulletInfoRaw: any) => {
@@ -163,7 +168,7 @@ io.on('connection', function (socket: any) {
     })
 
     socket.on('playerKilled', (pId: any) => {
-        if (socket.room && pId.playerId) {
+        if (socket.room && pId.playerId && pId.killerId) {
             socket.room.players = 
                 socket.room.players.filter((p: any) => p.data.id != pId.playerId);
         }

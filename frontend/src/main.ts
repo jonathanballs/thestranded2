@@ -151,6 +151,19 @@ const sketch = (s:any) => {
             s.rect(0,0, 10, 2)
         }
         s.pop()
+
+        // Draw the leaderboard
+        const leaderBoard = Object
+            .keys(gameState.players)
+            .map(k => gameState.players[k])
+            .concat([player])
+            .sort((a, b) => a.points - b.points)
+        console.log(leaderBoard);
+        leaderBoard.forEach((p, i) => {
+            s.textSize(20);
+            s.text(`${p.name}(${p.latency ? p.latency: 0} ms)`, 5, 20*(i+1))
+            s.text(`${p.points}`, 200, 20*(i+1))
+        });
     }
     s.mouseClicked = () => {
         if(Date.now() - lastShot < FIRE_RATE) {
@@ -200,6 +213,7 @@ function listen() {
                 name: location.search.split('name=')[1],
                 mode: 'player',
             });
+            player.name = location.search.split('name=')[1];
         } else {
             SPECTATOR = true
             socket.emit('joinRoom', {
@@ -231,9 +245,14 @@ function listen() {
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
                     gameState.players[id] = new Human(id, playerAnim, human.data.x, human.data.y)
+                    gameState.players[id].name = snapshot.players[id].name;
+                    gameState.players[id].latency = snapshot.players[id].latency;
                 } else {
                     // debug(`${playerId} has been updated`)
                     gameState.players[id].data = human.data
+                    gameState.players[id].name = human.name
+                    gameState.players[id].latency = human.latency
+                    // console.log(gameState.players[id]);
                 }
             }
             //handle zombies
@@ -274,7 +293,7 @@ function listen() {
                 const humanIds = Object.keys(gameState.players)
                 for(let humanId of humanIds) {
                     if(snapshot.players[humanId] == null) {
-                        debug(`Player ${humanId} has dced`)
+                        debug(`Player ${humanId} has died`)
                         delete gameState.players[humanId]
                     }
                 }
