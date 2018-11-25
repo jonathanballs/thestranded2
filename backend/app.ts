@@ -123,11 +123,12 @@ io.on('connection', function (socket: any) {
         });
 
         joi.validate(bulletInfoRaw, schema).then(bulletInfo => {
-            bulletInfo.timestampUpdated
+            bulletInfo.timestampUpdated = Date.now();
+            socket.room.bullets.push(bulletInfo);
             // Record bullets onto the location
         }).catch(err => {
             socket.emit('serverError',
-              `playerUpdateState: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
+              `playerFiresBullet: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
         })
     })
 
