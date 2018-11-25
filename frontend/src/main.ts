@@ -160,7 +160,7 @@ const sketch = (s:any) => {
         const leaderBoard = Object
             .keys(gameState.players)
             .map(k => gameState.players[k])
-            .concat([player])
+            .concat(!SPECTATOR ?[player] : [])
             .sort((a, b) => a.points - b.points)
         console.log(leaderBoard);
         leaderBoard.forEach((p, i) => {
@@ -245,7 +245,11 @@ function listen() {
             //handle players
             const playerIds = Object.keys(snapshot.players)
             for(let id of playerIds) {
-                if(id == playerId) { continue }
+                if(id == playerId) { 
+                    player.latency = snapshot.players[id].latency
+                    player.points = snapshot.players[id].points
+                    continue
+                }
                 const human = snapshot.players[id]
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)

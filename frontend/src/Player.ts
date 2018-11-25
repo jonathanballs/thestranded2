@@ -11,6 +11,8 @@ let PLAYER_SPEED = 10
 
 export default class Player extends Sprite {
     spectator:boolean
+    latency: number
+    points:number
     constructor(id:string='player', look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
         super(id, look, x, y)
         this.data.health = {
