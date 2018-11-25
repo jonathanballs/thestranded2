@@ -161,7 +161,7 @@ const sketch = (s:any) => {
             .keys(gameState.players)
             .map(k => gameState.players[k])
             .concat([player])
-            .sort((a, b) => a.points - b.points)
+            .sort((a, b)l=> b.points - a.points)
         console.log(leaderBoard);
         leaderBoard.forEach((p, i) => {
             s.textSize(20);
