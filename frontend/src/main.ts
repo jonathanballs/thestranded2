@@ -76,7 +76,6 @@ const sketch = (s:any) => {
         const hIds = Object.keys(gameState.players)
         for(let i=0; i < hIds.length; i++) {
             const human: Human = gameState.players[hIds[i]]
-            console.log(human)
             human.draw(s)
             human.update(timeDiff, s)
         }
@@ -151,14 +150,16 @@ socket.on('connect', () => {
     // When a game snapshot is received from the server
     socket.on('mapSnapshot', (snapshot: any) => {
         const playerIds = Object.keys(snapshot.players)
-        console.log(snapshot.players, gameState.players)
+        // console.log(snapshot.players, gameState.players)
         for(let id of playerIds) {
             if(id == playerId) { continue }
             // console.log(id, playerId)
             const human = snapshot.players[id]
             if(gameState.players[id] == null) {
+                debug(`${playerId} has joined`)
                 gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
             } else {
+                debug(`${playerId} has been updated`)
                 gameState.players[id].data = human.data
             }
         }
