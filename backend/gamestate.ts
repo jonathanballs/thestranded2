@@ -8,7 +8,10 @@ export class GameRoom {
     enemies: { [id: string]: Enemy } = {};
 
     // Add a new player to the game
-    addPlayer(player: Player) {
+    addPlayer(player: Player, spec:boolean = false) {
+        if(spec){
+            return 
+        }
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
         player.data.id = this.getAvailableId(uNameAlpha)
