@@ -2,6 +2,7 @@ export const DEBUG = true
 export const TILE_SIZE = 40
 export let CANVAS_SIZE = [window.innerWidth,window.innerHeight]
 export const NETWORK_TICK_MS = 10;
+export const GC_COUNT = 60;
 
 export var debug = (...args: any[]) => { }
 

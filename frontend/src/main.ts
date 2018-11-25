@@ -6,12 +6,13 @@ import Anim from './Animation'
 import Background from './Background'
 import Projectile from './Projectile'
 import Human from './Sprite'
-import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, debug} from './utils'
+import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, GC_COUNT, debug} from './utils'
 import io from 'socket.io-client';
 
 let socket:SocketIOClient.Socket// = io();
 
 const [width, height] = CANVAS_SIZE
+var gcCounter = GC_COUNT;
 var playerId:string;
 var playerAnim:Anim
 var player:Sprite
@@ -185,6 +186,19 @@ function listen() {
                     gameState.bullets[bulletId] = bullet
                     projectiles.push(projectile)
                 }
+            }
+            gcCounter--;
+            if(gcCounter == 0) {
+                debug('Attempt to GC')
+                gcCounter = GC_COUNT
+                const humanIds = Object.keys(gameState.players)
+                for(let humanId of humanIds) {
+                    if(snapshot.players[humanId] == null) {
+                        debug(`Player ${humanId} has dced`)
+                        delete gameState.players[humanId]
+                    }
+                }
+                
             }
         });
     });
