@@ -61,6 +61,13 @@ export class Player extends LivingEntity {
         this.name = name;
         // TODO: Check if a valid sprite id
         this.characterSpriteId = characterSpriteId || 'default';
+        this.data =  {
+            x: 0,
+            y: 0,
+            rot: 0,
+            velX: 0,
+            velY: 0,
+        }
     }
 }
 

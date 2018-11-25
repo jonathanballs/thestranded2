@@ -40,7 +40,7 @@ const entityDataSchema = joi.object().keys({
     velX: joi.number(),
     velY: joi.number(),
     rot: joi.number(),
-});
+}).required();
 
 // Handle socket.io connections
 io.on('connection', function (socket: any) {
