@@ -15,6 +15,7 @@ const [width, height] = CANVAS_SIZE
 var gcCounter = GC_COUNT;
 var playerId:string;
 var playerAnim:Anim
+var zombieAnim:Anim
 var player:Sprite
 var projectlieImage:p5.Image
 var projectiles:Projectile[] = []
@@ -27,12 +28,14 @@ var tile_set:Anim[]
 
 let gameState:any = {
     players: {},
-    bullets: {}
+    bullets: {},
+    enemies: {}
 }
 
 const sketch = (s:any) => {
     s.preload = () => {
         playerAnim = new Anim(s, '/static/imgs/blue.png', '/static/imgs/blue_walk.png')
+        zombieAnim = s.loadImage('/static/imgs/zombie.png')
         tile_set = [
             s.loadImage('/static/imgs/water.png'),
             s.loadImage('/static/imgs/dirt.png'),
@@ -82,6 +85,13 @@ const sketch = (s:any) => {
             const human: Human = gameState.players[hIds[i]]
             human.draw(s)
             human.update(timeDiff, s)
+        }
+
+        const zIds = Object.keys(gameState.enemies)
+        for(let i=0; i < zIds.length; i++) {
+            const zombie: Human = gameState.enemies[zIds[i]]
+            zombie.draw(s)
+            zombie.update(timeDiff, s)
         }
 
         // Projectiles
@@ -155,6 +165,8 @@ function listen() {
 
         // When a game snapshot is received from the server
         socket.on('mapSnapshot', (snapshot: any) => {
+            // console.log(snapshot)
+            //handle players
             const playerIds = Object.keys(snapshot.players)
             for(let id of playerIds) {
                 if(id == playerId) { continue }
@@ -168,6 +180,18 @@ function listen() {
                     gameState.players[id].data = human.data
                 }
             }
+            //handle zombies
+            const zombieIds = Object.keys(snapshot.enemies)
+            for(let id of zombieIds) {
+                const zombie = snapshot.enemies[id]
+                if(gameState.enemies[id] == null) {
+                    debug(`${id} spawned`)
+                    gameState.enemies[id] = new Human(zombieAnim, zombie.data.x, zombie.data.y)
+                } else {
+                    // gameState.zombies[id].data = zombie.data
+                }
+            }
+            //handle bullets
             for(let bullet of snapshot.bullets) {
                 if(bullet.shotBy == playerId) {
                     continue
@@ -186,6 +210,7 @@ function listen() {
                     projectiles.push(projectile)
                 }
             }
+            //garbage collector
             gcCounter--;
             if(gcCounter == 0) {
                 debug('Attempt to GC')
@@ -195,6 +220,13 @@ function listen() {
                     if(snapshot.players[humanId] == null) {
                         debug(`Player ${humanId} has dced`)
                         delete gameState.players[humanId]
+                    }
+                }
+                const zombieIds = Object.keys(gameState.enemies)
+                for(let zombieId of zombieIds) {
+                    if(snapshot.enemies[zombieId] == null) {
+                        debug(`Zombie ${zombieId} has died`)
+                        delete gameState.enemies[zombieId]
                     }
                 }
             }

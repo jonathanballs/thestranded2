@@ -5,7 +5,7 @@ export class GameRoom {
     seed: number;
     players: { [id: string]: Player } = {}; // Lookup players by id
     bullets: Bullet[] = [];
-    enemies: Enemy[] = [];
+    enemies: { [id: string]: Enemy } = {};
 
     // Add a new player to the game
     addPlayer(player: Player) {
@@ -18,7 +18,7 @@ export class GameRoom {
 
     addEnemy(enemy: Enemy) {
         enemy.id = this.getAvailableId(enemy.type);
-        this.enemies.push(enemy);
+        this.enemies[enemy.id] = enemy;
     }
 
     getAvailableId(prefix: string): string {

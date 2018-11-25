@@ -154,7 +154,7 @@ setInterval(() => {
     Object.keys(rooms).forEach(roomId => {
         const r = rooms[roomId];
 
-        if (r.enemies.length < 10) {
+        if (Object.keys(r.enemies).length < 10) {
             r.addEnemy(z);
         }
     });
