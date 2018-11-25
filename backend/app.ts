@@ -113,7 +113,7 @@ io.on('connection', function (socket: any) {
             ps[socket.playerId].timestampUpdated = Date.now();
         }).catch(err => {
             socket.emit('serverError',
-              `joinRoom: ${JSON.stringify(pStateRaw)}: ${err}`);
+              `playerUpdateState: ${JSON.stringify(pStateRaw)}: ${err}`);
         })
     });
 
@@ -127,7 +127,7 @@ io.on('connection', function (socket: any) {
             // Record bullets onto the location
         }).catch(err => {
             socket.emit('serverError',
-              `joinRoom: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
+              `playerUpdateState: ${JSON.stringify(bulletInfoRaw)}: ${err}`);
         })
     })
 
