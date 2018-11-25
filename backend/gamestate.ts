@@ -48,13 +48,18 @@ export class LivingEntity {
         this.type = type;
     }
 
+    distanceFrom(entity: LivingEntity): number {
+        return Math.sqrt(Math.pow(entity.data.x - this.data.x, 2)
+            + Math.pow(entity.data.y - this.data.y, 2));
+    }
+
     id: string;
     type: string; // player/zombie etc.
     data: { x: number, y: number, rot: number;
         velX: number; velY: number; }
         = { x: 0, y: 0, rot: 0, velX: 0, velY: 0, }
 
-    timestampUpdated: Date;
+    timestampUpdated: number;
 }
 
 // Human controlled player
@@ -80,5 +85,45 @@ export class Enemy extends LivingEntity {
 export class Zombie extends Enemy {
     constructor() {
         super('zombie');
+        this.timestampUpdated = Date.now();
+    }
+
+    nearestPlayer(players: {[pId: string]: Player }) {
+        let nearest: Player = null;
+        Object.keys(players).forEach(pId => {
+            const p = players[pId];
+            if (!nearest) {
+                nearest = p;
+            }
+
+            let nearestDist = Math.sqrt(Math.pow(nearest.data.x - this.data.x, 2)
+                + Math.pow(nearest.data.y - this.data.y, 2));
+            let pDist = Math.sqrt(Math.pow(p.data.x - this.data.x, 2)
+                + Math.pow(p.data.y - this.data.y, 2));
+            if (pDist < nearestDist) {
+                nearest = p;
+            }
+        });
+
+        return nearest;
+    }
+
+    update(state: GameRoom) {
+        const timeDelta = Date.now() - this.timestampUpdated;
+        this.timestampUpdated = Date.now();
+        const nearestPlayer = this.nearestPlayer(state.players);
+
+        var diff_x = nearestPlayer.data.x - this.data.x;
+        var diff_y = nearestPlayer.data.y - this.data.y;
+        var total_dist = Math.sqrt(diff_y * diff_y + diff_x * diff_x);
+        var dist_div = total_dist / ((1.5*timeDelta) / 1000);
+        
+        var delta_x = diff_x / dist_div;
+        var delta_y = diff_y / dist_div;
+
+        // Update the rotation and position of the Zombie.
+        this.data.rot = Math.atan2(diff_y, diff_x);
+        this.data.x = this.data.x + delta_x;
+        this.data.y = this.data.y + delta_y;
     }
 }
