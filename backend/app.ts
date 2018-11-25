@@ -43,6 +43,10 @@ const entityDataSchema = joi.object().keys({
     velY: joi.number(),
     rot: joi.number(),
     timestampUpdated: joi.number(),
+    health: {
+        max: joi.number(),
+        cur: joi.number()
+    }
 }).required();
 
 // Handle socket.io connections

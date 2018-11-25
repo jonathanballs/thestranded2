@@ -12,6 +12,10 @@ export interface SharedData {
         velX: number
         velY: number
         timestampUpdated: number
+        health: {
+            max: number
+            cur: number
+        }
 }
 
 export default class Sprite {
@@ -27,6 +31,10 @@ export default class Sprite {
             velX: 0,
             velY: 0,
             timestampUpdated: Date.now(),
+            health: {
+                max:1,
+                cur:1
+            }
         }
         if (width != null && height != null) {
             this.width = width
@@ -48,6 +56,15 @@ export default class Sprite {
     draw(s:any, time:number=Date.now(), noDebug:boolean = DEBUG) {
         s.push()
         s.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE)
+        s.noStroke()
+        s.fill('green')
+        // this.data.health.cur -= 0.01
+        s.rect(0,-50, s.map(
+            this.data.health.cur,
+            0,
+            this.data.health.max,
+            0,60
+        ), 10)
         s.rotate(this.data.rot)
         if (this.look instanceof Anim) {
             s.image(this.look.imageList[0], 0, 0, this.width, this.height)

@@ -10,6 +10,13 @@ const [width, height] = CANVAS_SIZE
 let PLAYER_SPEED = 10
 
 export default class Player extends Sprite {
+    constructor(id:string='player', look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
+        super(id, look, x, y)
+        this.data.health = {
+            max: 100,
+            cur: 100,
+        }
+    }
     update(timeDelta: number, s:any, background:Background) {
         const level = background.getLevel(s, this.data.x, this.data.y)
         if(level == 0) { PLAYER_SPEED = 3 }

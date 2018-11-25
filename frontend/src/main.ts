@@ -7,8 +7,17 @@ import Background from './Background'
 import Projectile from './Projectile'
 import Human from './Human'
 import Zombie from './Zombie'
-import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, GC_COUNT, debug} from './utils'
+import {
+    DEBUG,
+    CANVAS_SIZE,
+    TILE_SIZE,
+    NETWORK_TICK_MS,
+    GC_COUNT,
+    FIRE_RATE,
+    debug
+} from './utils'
 import io from 'socket.io-client';
+import { globalAgent } from 'https';
 
 let socket:SocketIOClient.Socket// = io();
 
@@ -22,6 +31,7 @@ var projectlieImage:p5.Image
 var projectiles:Projectile[] = []
 var background:Background;
 var lastUpdate = 0
+var lastShot = Date.now()
 let serverLatency = 0;
 let serverTimeOffset = 0; // ms ahead that the server is
 const getServerTime = (): number => { return +new Date + serverTimeOffset}
@@ -91,6 +101,12 @@ const sketch = (s:any) => {
         const zIds = Object.keys(gameState.enemies)
         for(let i=0; i < zIds.length; i++) {
             const zombie: Zombie = gameState.enemies[zIds[i]]
+            if(zombie.isColliding(s,player)) {
+                player.data.health.cur -= 1
+                if(player.data.health.cur <= 0) {
+                    gg(s)
+                }
+            }
             zombie.draw(s)
             projectiles.forEach((proj,i) => {
                 if(proj.isColliding(s, zombie)) {
@@ -127,6 +143,10 @@ const sketch = (s:any) => {
         s.pop()
     }
     s.mouseClicked = () => {
+        if(Date.now() - lastShot < FIRE_RATE) {
+            return
+        }
+        lastShot = Date.now()
         const distance = 0.5
         const deltaX = distance * Math.cos(player.data.rot)
         const deltaY = distance * Math.sin(player.data.rot)
@@ -138,7 +158,6 @@ const sketch = (s:any) => {
             player.data.rot)
 
         // Send bullet to the server
-        console.log(playerId)
         socket.emit('playerFiresBullet', {
             shotBy: playerId,
             data: projectile.data
@@ -146,6 +165,13 @@ const sketch = (s:any) => {
 
         projectiles.push(projectile) 
     }
+}
+
+function gg(s:any) {
+    console.log(gg)
+    socket.disconnect()
+    s.noLoop()
+    document.getElementById('defaultCanvas0').style.filter = 'saturate(0.2%'
 }
 
 //@ts-ignore
@@ -178,12 +204,10 @@ function listen() {
 
         // When a game snapshot is received from the server
         socket.on('mapSnapshot', (snapshot: any) => {
-            // console.log(snapshot)
             //handle players
             const playerIds = Object.keys(snapshot.players)
             for(let id of playerIds) {
                 if(id == playerId) { continue }
-                // console.log(id, playerId
                 const human = snapshot.players[id]
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
@@ -197,7 +221,6 @@ function listen() {
             const zombieIds = Object.keys(snapshot.enemies)
             for(let id of zombieIds) {
                 const zombie = snapshot.enemies[id]
-                // console.log(zombie)
                 if(gameState.enemies[id] == null) {
                     debug(`${id} spawned`)
                     gameState.enemies[id] = new Zombie(id, zombieAnim, zombie.data.x, zombie.data.y)
