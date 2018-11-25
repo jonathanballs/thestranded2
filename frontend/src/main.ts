@@ -75,7 +75,8 @@ const sketch = (s:any) => {
         // Draw gamestate
         const hIds = Object.keys(gameState.players)
         for(let i=0; i < hIds.length; i++) {
-            const human = gameState.players[hIds[i]]
+            const human: Human = gameState.players[hIds[i]]
+            console.log(human)
             human.draw(s)
             human.update(timeDiff, s)
         }
@@ -116,6 +117,7 @@ const sketch = (s:any) => {
         });
 
         projectiles.push(projectile) 
+
     }
 }
 
@@ -149,14 +151,15 @@ socket.on('connect', () => {
     // When a game snapshot is received from the server
     socket.on('mapSnapshot', (snapshot: any) => {
         const playerIds = Object.keys(snapshot.players)
+        console.log(snapshot.players, gameState.players)
         for(let id of playerIds) {
             if(id == playerId) { continue }
             // console.log(id, playerId)
             const human = snapshot.players[id]
-            if(human == null) {
+            if(gameState.players[id] == null) {
                 gameState.players[id] = new Human(playerAnim, human.data.x, human.data.y)
             } else {
-                gameState.players[id] = { data: human.data }
+                gameState.players[id].data = human.data
             }
         }
     });
@@ -188,6 +191,5 @@ setInterval(() => {
         latency: serverLatency,
         data: player.data
     }
-    console.log(player.data)
     socket.emit('playerUpdateState', p);
 }, NETWORK_TICK_MS);
