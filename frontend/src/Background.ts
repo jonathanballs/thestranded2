@@ -24,6 +24,7 @@ export default class Background {
         this.player = p
     }
     create(s:any) {
+        s.noiseSeed(300)
         for (let y = 0; y < MAP_SIZE; y++) {
             for (let x = 0; x < MAP_SIZE; x++) {
                 const noise = s.noise(x*NOISE_MULTIPLIER, y*NOISE_MULTIPLIER)

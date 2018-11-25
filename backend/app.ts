@@ -4,7 +4,7 @@ import SocketIO from 'socket.io';
 import express from 'express';
 import joi, { number } from 'joi';
 
-import { GameRoom, Player, Zombie } from './gamestate';
+import { GameRoom, Player, Zombie, Enemy } from './gamestate';
 import { thisExpression, throwStatement } from 'babel-types';
 
 const NETWORK_TICK_MS = 10;
@@ -147,15 +147,24 @@ setInterval(() => {
     });
 }, NETWORK_TICK_MS);
 
-// Periodically add enemies
+function isZombie(enemy: Enemy): enemy is Zombie {
+    return enemy.type === 'zombie';
+}
+
+// Periodically add enemies and update old ones
 setInterval(() => {
-    // Add a zombie
-    const z = new Zombie();
     Object.keys(rooms).forEach(roomId => {
+        // Add a zombie
         const r = rooms[roomId];
 
         if (Object.keys(r.enemies).length < 10) {
-            r.addEnemy(z);
+            r.addEnemy(new Zombie);
+        }
+        for(let zombieId of Object.keys(r.enemies)) {
+            if(isZombie(r.enemies[zombieId])) {
+                //@ts-ignore
+                r.enemies[zombieId].update(r)
+            }
         }
     });
 }, 2000);
