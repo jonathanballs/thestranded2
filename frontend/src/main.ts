@@ -170,7 +170,6 @@ function listen() {
             }
             for(let bullet of snapshot.bullets) {
                 if(bullet.shotBy == playerId) {
-                    //console.log('ignore bullet')
                     continue
                 }
                 const bulletId = `${bullet.shotBy}-${bullet.timestampUpdated}`
@@ -198,7 +197,6 @@ function listen() {
                         delete gameState.players[humanId]
                     }
                 }
-                
             }
         });
     });
