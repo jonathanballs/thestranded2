@@ -9,9 +9,9 @@ export default class Projectile extends Sprite{
     creationTime: number
     constructor(look: p5.Image, x:number, y:number, rot:number) {
         super(look, x, y, 10,10)
-        this.rot = rot
-        this.velX = MAX_VEL * Math.cos(rot)
-        this.velY = MAX_VEL * Math.sin(rot)
+        this.data.rot = rot
+        this.data.velX = MAX_VEL * Math.cos(rot)
+        this.data.velY = MAX_VEL * Math.sin(rot)
         this.alive = true
         this.creationTime = Date.now()
     }
@@ -22,13 +22,13 @@ export default class Projectile extends Sprite{
             return
         }
         const mult = timeDelta/100
-        this.x += this.velX * mult
-        this.y += this.velY * mult
+        this.data.x += this.data.velX * mult
+        this.data.y += this.data.velY * mult
     }
 
     draw(s:any) {
         s.push()
-        s.translate(this.x * TILE_SIZE, this.y * TILE_SIZE)
+        s.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE)
         s.fill('black')
         s.noStroke()
         s.ellipse(0,0,10)

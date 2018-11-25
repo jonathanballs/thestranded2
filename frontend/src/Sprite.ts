@@ -5,20 +5,22 @@ import { TILE_SIZE, DEBUG, debug } from './utils'
 
 
 export default class Sprite {
-    x: number
-    y: number
-    rot: number
-    velX: number
-    velY: number
+    data: {
+        x: number
+        y: number
+        rot: number
+        velX: number
+        velY: number
+    }
     width: number
     height: number
     look: Anim | p5.Image
     constructor(look: Anim | p5.Image, x: number, y: number, width?: number, height?: number) {
-        this.x = x
-        this.y = y
-        this.rot = 0
-        this.velX = 0
-        this.velY = 0
+        this.data.x = x
+        this.data.y = y
+        this.data.rot = 0
+        this.data.velX = 0
+        this.data.velY = 0
         if (width != null && height != null) {
             this.width = width
             this.height = height
@@ -32,14 +34,14 @@ export default class Sprite {
 
     update(timeDelta: number, s:any) {
         const mult = timeDelta/100
-        this.x += this.velX * mult
-        this.y += this.velY * mult
+        this.data.x += this.data.velX * mult
+        this.data.y += this.data.velY * mult
     }
 
     draw(s:any, noDebug:boolean = DEBUG) {
         s.push()
-        s.translate(this.x * TILE_SIZE, this.y * TILE_SIZE)
-        s.rotate(this.rot)
+        s.translate(this.data.x * TILE_SIZE, this.data.y * TILE_SIZE)
+        s.rotate(this.data.rot)
         if (this.look instanceof Anim) {
             s.image(this.look.imageList[0], 0, 0, this.width, this.height)
         } else {
