@@ -146,4 +146,4 @@ setInterval(() => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
     });
-}, 1000);
+}, NETWORK_TICK_MS);
