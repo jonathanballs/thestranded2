@@ -92,6 +92,9 @@ const sketch = (s:any) => {
         for(let i=0; i < zIds.length; i++) {
             const zombie: Zombie = gameState.enemies[zIds[i]]
             zombie.draw(s)
+            projectiles.forEach(proj => {
+                proj.isColliding(s, zombie)
+            })
         }
 
         // Projectiles

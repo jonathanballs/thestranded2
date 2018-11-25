@@ -6,6 +6,7 @@ const LIFE_TIME = 2500
 const MAX_VEL = 20
 export default class Projectile extends Sprite{
     alive: boolean
+    renderedFor: number
     constructor(look: p5.Image, x:number, y:number, rot:number) {
         super(look, x, y, 10,10)
         this.data.rot = rot
@@ -13,11 +14,14 @@ export default class Projectile extends Sprite{
         this.data.velY = MAX_VEL * Math.sin(rot)
         this.data.timestampUpdated = Date.now()
         this.alive = true
+        this.renderedFor = 0
+        
     }
 
     draw(s:any, time:number=Date.now(), noDebug:boolean = DEBUG) {
+        this.renderedFor += time - this.data.timestampUpdated
         const startTime = Date.now()
-        if(time - this.data.timestampUpdated > LIFE_TIME) {
+        if(this.renderedFor > LIFE_TIME) {
             this.alive = false
             return
         }

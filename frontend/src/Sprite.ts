@@ -58,9 +58,17 @@ export default class Sprite {
         s.pop()
     }
 
-    isColliding(target:Sprite): boolean {
+    isColliding(s:any, target:Sprite): boolean {
         const distance2 = Math.pow(this.data.y - target.data.y,2) + Math.pow(this.data.x - target.data.x,2)
-        const collisionDistance = Math.pow(this.width,2) + Math.pow(target.width, 2)
+        const collisionDistance = Math.pow(this.width/TILE_SIZE,2) + Math.pow(target.width/TILE_SIZE, 2)
+        if(DEBUG){
+            s.line(
+                this.data.x * TILE_SIZE,
+                this.data.y * TILE_SIZE,
+                target.data.x * TILE_SIZE,
+                target.data.y * TILE_SIZE,
+                )
+        }
         if(distance2 < collisionDistance) {
             debug(this.data, 'collided with', target)
             return true
