@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Stranded 2</title>
-    <style> body {padding: 0; margin: 0;} </style>
-    <script src="/static/lib/p5.js"></script> 
-    <script src="/static/lib/p5.dom.js"></script>
-    <!-- <script src="/lib/p5.sound.js"></script> -->
-    <!-- <script src="/lib/p5.play.js"></script> -->
-  </head>
-  <body>
-    <script src="/static/client.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Stranded 2</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/lib/p5.js"></script>
+  <script src="/static/lib/p5.dom.js"></script>
+  <!-- <script src="/lib/p5.sound.js"></script> -->
+  <!-- <script src="/lib/p5.play.js"></script> -->
+</head>
+
+<body>
+  <audio loop autoplay controls="controls" style="display: none">
+    <source src="/static/loop.mp3" />
+  </audio>
+  <script src="/static/client.js"></script>
+</body>
 </html>

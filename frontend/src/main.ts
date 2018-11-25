@@ -27,7 +27,7 @@ var gcCounter = GC_COUNT;
 var playerId:string;
 var playerAnim:Anim
 var zombieAnim:Anim
-var player:Sprite
+var player:Player
 var projectlieImage:p5.Image
 var projectiles:Projectile[] = []
 var background:Background;
@@ -86,18 +86,20 @@ const sketch = (s:any) => {
                 (height/2 - (player.data.y * TILE_SIZE))
             )
         }else{
-            s.translate(
-                (width/2 - (player.data.x * TILE_SIZE)),
-                (height/2 - (player.data.y * TILE_SIZE))
-            )
             s.scale(0.5)
+            s.translate(
+                (width - (player.data.x * TILE_SIZE)),
+                (height - (player.data.y * TILE_SIZE))
+            )
 
         }
         // BACKGROUND
         background.draw(s)
 
         // Player
-        player.draw(s)
+        if(!SPECTATOR) {
+            player.draw(s)
+        } else { player.spectator = SPECTATOR}
         player.update(timeDiff, s, background)
 
         // Draw gamestate
@@ -111,10 +113,12 @@ const sketch = (s:any) => {
         const zIds = Object.keys(gameState.enemies)
         for(let i=0; i < zIds.length; i++) {
             const zombie: Zombie = gameState.enemies[zIds[i]]
-            if(zombie.isColliding(s,player)) {
-                player.data.health.cur -= 1
-                if(player.data.health.cur <= 0) {
-                    gg(s, player.data.id);
+            if(!SPECTATOR) {
+                if(zombie.isColliding(s,player)) {
+                    player.data.health.cur -= 1
+                    if(player.data.health.cur <= 0) {
+                        gg(s, player.data.id);
+                    }
                 }
             }
             zombie.draw(s)
@@ -166,6 +170,7 @@ const sketch = (s:any) => {
         });
     }
     s.mouseClicked = () => {
+        if(SPECTATOR) { return }
         if(Date.now() - lastShot < FIRE_RATE) {
             return
         }
