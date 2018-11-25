@@ -5,7 +5,8 @@ import Player from './Player'
 import Anim from './Animation'
 import Background from './Background'
 import Projectile from './Projectile'
-import Human from './Sprite'
+import Human from './Human'
+import Zombie from './Zombie'
 import {DEBUG, CANVAS_SIZE, TILE_SIZE, NETWORK_TICK_MS, GC_COUNT, debug} from './utils'
 import io from 'socket.io-client';
 
@@ -91,7 +92,7 @@ const sketch = (s:any) => {
         for(let i=0; i < zIds.length; i++) {
             const zombie: Human = gameState.enemies[zIds[i]]
             zombie.draw(s)
-            zombie.update(timeDiff, s)
+            // zombie.update(timeDiff, s)
         }
 
         // Projectiles
@@ -100,7 +101,7 @@ const sketch = (s:any) => {
                 projectiles.splice(i, 1)
                 continue
             }
-            projectiles[i].update(timeDiff, s)
+            // projectiles[i].update(timeDiff, s)
             projectiles[i].draw(s)
         }
 
@@ -131,7 +132,6 @@ const sketch = (s:any) => {
         });
 
         projectiles.push(projectile) 
-
     }
 }
 
@@ -170,7 +170,7 @@ function listen() {
             const playerIds = Object.keys(snapshot.players)
             for(let id of playerIds) {
                 if(id == playerId) { continue }
-                // console.log(id, playerId)
+                // console.log(id, playerId
                 const human = snapshot.players[id]
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
@@ -184,10 +184,10 @@ function listen() {
             const zombieIds = Object.keys(snapshot.enemies)
             for(let id of zombieIds) {
                 const zombie = snapshot.enemies[id]
-                console.log(zombie)
+                // console.log(zombie)
                 if(gameState.enemies[id] == null) {
                     debug(`${id} spawned`)
-                    gameState.enemies[id] = new Human(zombieAnim, zombie.data.x, zombie.data.y)
+                    gameState.enemies[id] = new Zombie(zombieAnim, zombie.data.x, zombie.data.y)
                 } else {
                     gameState.enemies[id].data = zombie.data
                 }
@@ -205,8 +205,7 @@ function listen() {
                         projectlieImage,
                         bullet.data.x,
                         bullet.data.y,0)
-                    projectile.data.velX = bullet.data.velX
-                    projectile.data.velY = bullet.data.velY
+                    projectile.data = bullet.data
                     gameState.bullets[bulletId] = bullet
                     projectiles.push(projectile)
                 }

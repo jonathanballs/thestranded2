@@ -40,6 +40,7 @@ const entityDataSchema = joi.object().keys({
     velX: joi.number(),
     velY: joi.number(),
     rot: joi.number(),
+    timestampUpdated: joi.number(),
 }).required();
 
 // Handle socket.io connections
@@ -158,7 +159,7 @@ setInterval(() => {
         // Add a zombie
         const r = rooms[roomId];
 
-        if (Object.keys(r.enemies).length < 10) {
+        if (Object.keys(r.enemies).length < 1) {
             r.addEnemy(new Zombie);
         }
         for(let zombieId of Object.keys(r.enemies)) {
@@ -168,4 +169,4 @@ setInterval(() => {
             }
         }
     });
-}, 2000);
+}, 10);

@@ -11,6 +11,7 @@ export default class Sprite {
         rot: number
         velX: number
         velY: number
+        timestampUpdated: number
     }
     width: number
     height: number
@@ -21,6 +22,7 @@ export default class Sprite {
             rot: 0,
             velX: 0,
             velY: 0,
+            timestampUpdated: Date.now(),
         }
         if (width != null && height != null) {
             this.width = width
