@@ -4,7 +4,7 @@ import SocketIO from 'socket.io';
 import express from 'express';
 import joi, { number } from 'joi';
 
-import { GameRoom, Player } from './gamestate';
+import { GameRoom, Player, Zombie } from './gamestate';
 import { thisExpression, throwStatement } from 'babel-types';
 
 const NETWORK_TICK_MS = 10;
@@ -48,7 +48,6 @@ io.on('connection', function (socket: any) {
     socket.on('disconnect', () => {
         // Remove player from game
         delete socket.room.players[socket.playerId];
-        console.log("playerid discon", socket.playerId);
         console.log(`${socket.playerId} has disconnected`);
     });
 
@@ -147,3 +146,16 @@ setInterval(() => {
         console.log(r);
     });
 }, NETWORK_TICK_MS);
+
+// Periodically add enemies
+setInterval(() => {
+    // Add a zombie
+    const z = new Zombie();
+    Object.keys(rooms).forEach(roomId => {
+        const r = rooms[roomId];
+
+        if (r.enemies.length < 10) {
+            r.addEnemy(z);
+        }
+    });
+}, 2000);

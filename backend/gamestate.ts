@@ -5,22 +5,33 @@ export class GameRoom {
     seed: number;
     players: { [id: string]: Player } = {}; // Lookup players by id
     bullets: Bullet[] = [];
+    enemies: Enemy[] = [];
 
     // Add a new player to the game
     addPlayer(player: Player) {
         // Find the first available id
         const uNameAlpha = player.name.replace(/\W/g, '')
+        player.id = this.getAvailableId(uNameAlpha)
+        this.players[player.id] = player;
+        // TODO: Set their position etc.
+    }
+
+    addEnemy(enemy: Enemy) {
+        enemy.id = this.getAvailableId(enemy.type);
+        this.enemies.push(enemy);
+    }
+
+    getAvailableId(prefix: string): string {
         let i = 0;
+        let id;
         while (true) {
-            player.id = `player-${uNameAlpha}-${i.toString()}`;
-            if (this.players[player.id] === undefined) {
-                this.players[player.id] = player;
+            id = `${prefix}-${i.toString()}`;
+            if (this.players[id] === undefined) {
                 break;
             }
             i++;
         }
-
-        // TODO: Set their position etc.
+        return id;
     }
 
     constructor(roomName: string) {
@@ -39,13 +50,9 @@ export class LivingEntity {
 
     id: string;
     type: string; // player/zombie etc.
-    data: {
-        x: number,
-        y: number,
-        rot: number;
-        velX: number;
-        velY: number;
-    }
+    data: { x: number, y: number, rot: number;
+        velX: number; velY: number; }
+        = { x: 0, y: 0, rot: 0, velX: 0, velY: 0, }
 
     timestampUpdated: Date;
 }
@@ -61,15 +68,17 @@ export class Player extends LivingEntity {
         this.name = name;
         // TODO: Check if a valid sprite id
         this.characterSpriteId = characterSpriteId || 'default';
-        this.data =  {
-            x: 0,
-            y: 0,
-            rot: 0,
-            velX: 0,
-            velY: 0,
-        }
     }
 }
 
 export class Bullet extends LivingEntity {
+}
+
+export class Enemy extends LivingEntity {
+}
+
+export class Zombie extends Enemy {
+    constructor() {
+        super('zombie');
+    }
 }
