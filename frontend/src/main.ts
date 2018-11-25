@@ -160,8 +160,8 @@ const sketch = (s:any) => {
         const leaderBoard = Object
             .keys(gameState.players)
             .map(k => gameState.players[k])
-            .concat([player])
-            .sort((a, b)l=> b.points - a.points)
+            .concat(!SPECTATOR ?[player] : [])
+            .sort((a, b) => b.points - a.points)
         console.log(leaderBoard);
         leaderBoard.forEach((p, i) => {
             s.textSize(20);
@@ -171,7 +171,7 @@ const sketch = (s:any) => {
     }
     s.mouseClicked = () => {
         if(SPECTATOR) { return }
-        if(Date.now() - lastShot < FIRE_RATE) {
+        if(Date.now() - lastShot < (FIRE_RATE - player.points * 100)) {
             return
         }
         lastShot = Date.now()
@@ -245,7 +245,11 @@ function listen() {
             //handle players
             const playerIds = Object.keys(snapshot.players)
             for(let id of playerIds) {
-                if(id == playerId) { continue }
+                if(id == playerId) { 
+                    player.latency = snapshot.players[id].latency
+                    player.points = snapshot.players[id].points
+                    continue
+                }
                 const human = snapshot.players[id]
                 if(gameState.players[id] == null) {
                     debug(`${playerId} has joined`)
