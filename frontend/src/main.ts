@@ -162,8 +162,12 @@ const sketch = (s:any) => {
             .map(k => gameState.players[k])
             .concat(!SPECTATOR ?[player] : [])
             .sort((a, b) => b.points - a.points)
-        console.log(leaderBoard);
         leaderBoard.forEach((p, i) => {
+            if (p.data.id == player.data.id) {
+                s.fill('blue');
+            } else {
+                s.fill('black');
+            }
             s.textSize(20);
             s.text(`${p.name}(${p.latency ? p.latency: 0} ms)`, 5, 20*(i+1))
             s.text(`${p.points}`, 200, 20*(i+1))
@@ -232,6 +236,7 @@ function listen() {
             console.log(roomData);
             if(roomData.player != null) {
                 playerId = roomData.player.data.id
+                player.data.id = roomData.player.data.id
             }
         })
 

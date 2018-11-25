@@ -185,6 +185,7 @@ setInterval(() => {
     Object.keys(rooms).forEach(roomId => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
+        console.log(r.players);
     })
 }, NETWORK_TICK_MS);
 
