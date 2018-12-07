@@ -74,6 +74,7 @@ export class Player extends LivingEntity {
     points: number = 0;
     characterSpriteId: string;
     active: boolean = true;
+    latency: number = 0;
 
     constructor(name: string, characterSpriteId: string) {
         super('player');

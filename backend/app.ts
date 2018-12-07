@@ -46,14 +46,20 @@ const entityDataSchema = joi.object().keys({
     velY: joi.number(),
     rot: joi.number(),
     timestampUpdated: joi.number(),
-    health: {
+    health: joi.object().keys({
         max: joi.number(),
         cur: joi.number()
-    }
+    }),
 }).required();
 
+interface StrandedSocket extends SocketIO.Socket {
+    playerId: string;
+    room: GameRoom;
+    roomName: string;
+}
+
 // Handle socket.io connections
-io.on('connection', function (socket: any) {
+io.on('connection', function (socket: StrandedSocket) {
 
     socket.on('disconnect', () => {
         // Remove player from game
@@ -121,7 +127,6 @@ io.on('connection', function (socket: any) {
         joi.validate(pStateRaw, schema).then(pState => {
             const ps = socket.room.players;
             ps[socket.playerId].data = pState.data;
-            ps[socket.playerId].timestampUpdated = Date.now();
             ps[socket.playerId].latency = pState.latency;
         }).catch(err => {
             socket.emit('serverError',
@@ -167,10 +172,9 @@ io.on('connection', function (socket: any) {
         })
     })
 
-    socket.on('playerKilled', (pId: any) => {
+    socket.on('playerKilled', (pId: { playerId: string, killerId: string }) => {
         if (socket.room && pId.playerId && pId.killerId) {
-            socket.room.players = 
-                socket.room.players.filter((p: any) => p.data.id != pId.playerId);
+            delete socket.room.players[pId.playerId];
         }
     })
 
@@ -185,7 +189,6 @@ setInterval(() => {
     Object.keys(rooms).forEach(roomId => {
         const r = rooms[roomId];
         io.to(roomId).emit('mapSnapshot', r);
-        console.log(r.players);
     })
 }, NETWORK_TICK_MS);
 

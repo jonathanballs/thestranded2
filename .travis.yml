@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - node
 env:
-- DOKKU_HOST=206.189.120.167
+- DOKKU_HOST=jnthn.uk SUBDOMAIN=stranded2
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_69cd972f2a72_key -iv $encrypted_69cd972f2a72_iv -in deploy.key.enc -out deploy.key -d
@@ -12,7 +12,7 @@ after_success:
 - chmod 600 deploy.key
 - ssh-add deploy.key
 - ssh-keyscan $DOKKU_HOST >> ~/.ssh/known_hosts
-- git remote add deploy dokku@$DOKKU_HOST:$TRAVIS_BRANCH
+- git remote add deploy dokku@$DOKKU_HOST:$SUBDOMAIN
 - git config --global push.default simple
 - git push -f deploy master
 
