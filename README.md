@@ -1,5 +1,7 @@
 # The Stranded 2 [![Build Status](https://travis-ci.org/jonathanballs/thestranded2.svg?branch=master)](https://travis-ci.org/jonathanballs/thestranded2.ts)
 
+![Screenshot](/screenshot.png)
+
 ## Getting started
 * `yarn install`: to install dependencies
 * `yarn build`: to compile the client and server to javascript
