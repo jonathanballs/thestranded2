@@ -7,7 +7,7 @@ export const FIRE_RATE = 1000;
 
 export var debug = (...args: any[]) => { }
 
-window.onresize = (e) => {
+window.onresize = (e : any) => {
     CANVAS_SIZE = [window.innerWidth,window.innerHeight]
 }
 
